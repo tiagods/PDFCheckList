@@ -8,18 +8,19 @@ package br.com.tiagods.model;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * @author Tiago
  */
 public class ArquivosBean implements Serializable{
-    private final List<File> arquivos = new ArrayList();
+    private final Set<File> arquivos = new HashSet();
     /**
      * @return the arquivos
      */
-    public List<File> getArquivos() {
+    public Set<File> getArquivos() {
         return arquivos;
     }
 

@@ -5,6 +5,7 @@
  */
 package br.com.tiagods.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
@@ -16,7 +17,22 @@ import javax.swing.table.DefaultTableModel;
  * @author Tiago
  */
 public class Tabela {
-    
+    public void preencherTabela(JTable table, ArrayList lista){
+        DefaultTableModel tbm = (DefaultTableModel)table.getModel();
+        int linha =0;
+        while(linha<lista.size()){
+            tbm.addRow(new Object[1]);
+            Iterator<String> iterator = ((ArrayList)lista.get(linha)).iterator();
+            int coluna = 0;
+            while(iterator.hasNext()){
+                tbm.setValueAt(iterator.next(), linha, coluna);
+                coluna++;
+            }
+            linha++;
+            
+        }
+        
+    }
     public int pegarNumeroDeLinhas(JTable table){
         DefaultTableModel tbm = (DefaultTableModel)table.getModel();
         return tbm.getRowCount();
