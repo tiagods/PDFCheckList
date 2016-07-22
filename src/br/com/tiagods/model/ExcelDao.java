@@ -48,27 +48,25 @@ public class ExcelDao {
         
         for(int i = 0; i< lista.size(); i++){
             Label codigo = null, status = null, nome = null, cnpj = null, 
-                    statusCodigo = null, statusNome = null, statusCNPJ = null, 
+                    statusCodigo = null, statusCNPJ = null, 
                     observacao = null;
             if(i==0){
                 codigo= new Label(0 ,i, "Codigo" , cf );
                 status = new Label(1 ,i, "Status"  , cf );
                 nome = new Label(2, i, "Nome" , cf );
                 cnpj  = new Label(3, i , "CNPJ" , cf );                  
-                statusCodigo= new Label( 4, i, "Status Codigo" , cf );                  
-                statusNome = new Label(5, i, "Status Nome"  , cf );
-                statusCNPJ= new Label(6 ,i, "Status CNPJ"  , cf );
-                observacao= new Label(7, i, "Outros Arquivos"  , cf );
+                statusCodigo= new Label( 4, i, "Status Codigo" , cf );  
+                statusCNPJ= new Label(5 ,i, "Status CNPJ"  , cf );
+                observacao= new Label(6, i, "Outros Arquivos"  , cf );
             }
             else{
                 codigo= new Label(0 ,i, (String)((ArrayList)lista.get(i)).get(0) , cf );
                 status = new Label(1 ,i, (String)((ArrayList)lista.get(i)).get(1)  , cf );
                 nome = new Label(2, i, (String)((ArrayList)lista.get(i)).get(2) , cf );
                 cnpj  = new Label(3, i , (String)((ArrayList)lista.get(i)).get(3) , cf );                  
-                statusCodigo= new Label( 4, i, (String)((ArrayList)lista.get(i)).get(4) , cf );                  
-                statusNome = new Label(5, i, (String)((ArrayList)lista.get(i)).get(5)  , cf );
-                statusCNPJ= new Label(6 ,i, (String)((ArrayList)lista.get(i)).get(6)  , cf );
-                observacao= new Label(7, i, (String)((ArrayList)lista.get(i)).get(7)  , cf );
+                statusCodigo= new Label( 4, i, (String)((ArrayList)lista.get(i)).get(4) , cf ); 
+                statusCNPJ= new Label(5 ,i, (String)((ArrayList)lista.get(i)).get(5)  , cf );
+                observacao= new Label(6, i, (String)((ArrayList)lista.get(i)).get(6)  , cf );
             }
             try {
                 excelSheet.addCell( codigo );
@@ -76,7 +74,6 @@ public class ExcelDao {
                 excelSheet.addCell( nome );
                 excelSheet.addCell( cnpj );
                 excelSheet.addCell( statusCodigo );
-                excelSheet.addCell( statusNome );
                 excelSheet.addCell( statusCNPJ );
                 excelSheet.addCell( observacao );
             } catch (WriteException ex) {
