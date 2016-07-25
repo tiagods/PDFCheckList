@@ -15,6 +15,10 @@ import javax.swing.JComboBox;
 
 import static br.com.tiagods.view.Menu.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,7 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -43,19 +49,22 @@ public class ControllerMenu implements ActionListener, MouseListener{
     /*
     Colunas para cada tipo de registro / apenas para melhor visualização
     */
-    int colunaCodigo=0;
-    int colunaStatus=1;
-    int colunaNome=2;
-    int colunaCnpj=3;
-    int colunaStatusCod=4;
-    int colunaStatusNome=5;
-    int colunaStatusCnpj=6;
-    int colunaObservacao=7;
+    boolean cancelar = false;
+    File temp = new File(System.getProperty("user.dir")+"/temp");
+    File fileSaida = new File(temp+"/Cadastro.xls");;//arquivo temporario no sistema
     int delimitador;
     
     public void iniciar(){
+        if(!temp.exists())
+            temp.mkdir();
+        File[] arqTemp = temp.listFiles();
+        for(File f : arqTemp)
+            f.delete();
         travarCampos(jPanel1);
         travarCampos(jPanel2);
+        mostrarIcones(txCaminhoArquivo,txIconValido);
+        mostrarIcones(txCaminhoPDF, txIconValido1);
+        mostrarIcones(txCaminhoOutros,txIconValido2);                    
     }
     public void travarCampos(JPanel panel){//metodo para travar campos para não edição
         for(int i =0; i<panel.getComponentCount();i++){
@@ -101,14 +110,12 @@ public class ControllerMenu implements ActionListener, MouseListener{
             case "Iniciar"://iniciar tratamento dos campos e liberar procura de dados dos clientes nos diretorios
                 caminho = txCaminhoArquivo.getText();
                 if(!caminho.equals("") && new File(caminho).isFile()){
-                    String dir = txCaminhoPDF.getText();
-                    if(!dir.equals("") && new File(dir).isDirectory()){
+                    if(!txCaminhoPDF.getText().equals("") || !txCaminhoOutros.getText().equals("")){
                         if(validarNumero(txDelimitador.getText())){
                             if(txBuscarNome.getText().equals("")){
                                 String comentario = "Se você não informar uma expressão resumida\n "
                                         + "o numero de resultados podem ultrapassar a quantidade de registros além do esperado para cada busca\n"
                                         + "O processo pode demora mais para terminar!\nMesmo assim deseja continuar?";
-
                                 int valor = JOptionPane.showConfirmDialog(null,comentario,"Filtro não informado!",JOptionPane.YES_NO_OPTION);
                                 if(valor == JOptionPane.YES_OPTION)
                                     Time();
@@ -120,7 +127,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
                         }
                     }
                     else
-                        JOptionPane.showMessageDialog(null, "Informe um diretorio valido dos arquivos PDF!");
+                        JOptionPane.showMessageDialog(null, "Informe um diretorio valido dos arquivos PDF ou para outros arquivos!");
                         
                 }
                 else
@@ -128,7 +135,28 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 break;
             
             case "CarregarArquivo":
-                caminho = carregarArquivo(true, "Abrir Arquivo...");
+                caminho = carregarArquivo(true, false, "Abrir Arquivo...");
+                File arquivo  = new File(caminho);
+                if(arquivo.getName().equals("Cadastro.xls")){
+                    FileOutputStream system = null;
+                    FileInputStream stream = null;
+                    FileChannel entrada;
+                    FileChannel saida;
+                    try{
+                        stream = new FileInputStream(caminho);
+                        system  = new FileOutputStream(fileSaida);
+                        entrada = stream.getChannel();
+                        saida = system.getChannel();
+                        entrada.transferTo(0, entrada.size(), saida);
+                        caminho = fileSaida.getAbsolutePath();
+                    }catch (IOException ex) {
+                    }finally{
+                        try {
+                            system.close();
+                            stream.close();
+                        } catch (IOException ex) {}
+                    }
+                }
                 if(!caminho.equals("")){
                     txCaminhoArquivo.setText(caminho);
                     Arquivo validador = new Arquivo();
@@ -153,17 +181,30 @@ public class ControllerMenu implements ActionListener, MouseListener{
                             JOptionPane.showMessageDialog(null, "Não foi possivel ler o arquivo de origem,\n"
                                     + "Verifique se o arquivo é valido!\nArquivo protegidos por senhas não podem ser abertos!");
                     }
+                    if(fileSaida.exists())
+                        fileSaida.delete();//deletar arquivo temporario
                 }
+                mostrarIcones(txCaminhoArquivo,txIconValido);
+                mostrarIcones(txCaminhoPDF, txIconValido1);
+                mostrarIcones(txCaminhoOutros,txIconValido2);
+                
                 break;
             case "CarregarDir":
-                String diretorio = carregarArquivo(false, "Escolher caminho...");
+                String diretorio = carregarArquivo(false, false, "Escolher caminho...");
                 if(!diretorio.equals(""))
                     txCaminhoPDF.setText(diretorio);
+                mostrarIcones(txCaminhoArquivo,txIconValido);
+                mostrarIcones(txCaminhoPDF, txIconValido1);
+                mostrarIcones(txCaminhoOutros,txIconValido2);
+                
                 break;
             case "CarregarOutros":
-                String diretorio2 = carregarArquivo(false, "Escolher caminho...");
+                String diretorio2 = carregarArquivo(false, false, "Escolher caminho...");
                 if(!diretorio2.equals(""))
                     txCaminhoOutros.setText(diretorio2);
+                mostrarIcones(txCaminhoArquivo,txIconValido);
+                mostrarIcones(txCaminhoPDF, txIconValido1);
+                mostrarIcones(txCaminhoOutros,txIconValido2);
                 break;
             case "Refresh":
                 refresh();
@@ -212,9 +253,35 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 help = new Help();
                 JOptionPane.showMessageDialog(null, help.getCuringa());
                 break;
+            case "Exportar":
+                String export = carregarArquivo(false, true, "Salvar arquivo");
+                if(!export.equals("") && cliente!=null){
+                   PlanilhaDao planilha = new PlanilhaDao();
+                   planilha.exportToExcel(cliente, new File(export+".xls"));
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "Não existe dados para gerar relatorio!");
+                
+                break;
+            case "Relatorio":
+                tabela = new Tabela();
+                List<CadastroBean> lista;
+                lista = tabela.pegarDadosTabela(tbPrincipal);
+                if(!lista.isEmpty()){
+                    Relatorio relatorio = new Relatorio();
+                    relatorio.imprimir(lista);
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "Não existe dados para gerar relatorio!");
+                break;
+            case "Cancelar":
+                String msg = "Deseja cancelar a tarefa atual, os registros só serão mostrados até a fase atual?";
+                int valor = JOptionPane.showConfirmDialog(null, msg, "Cancelar Tarefa", JOptionPane.YES_NO_OPTION);
+                if(valor==JOptionPane.YES_OPTION){
+                    cancelar = true;
+                }
+                break;
         }
-        
-    
     }
     private void preencherTabela(){
         //preencher tabela de status
@@ -261,7 +328,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
             diretorioOpcional = arquivo.pegarArquivos(txCaminhoOutros.getText(), false, null);
         
         Tabela tabela = new Tabela();
-        tabela.limparTabela(jTable1);
+        tabela.limparTabela(tbPrincipal);
         
         TreeSet<String> mapa;//pega fitro do status
 
@@ -280,6 +347,10 @@ public class ControllerMenu implements ActionListener, MouseListener{
         
         int v = 0; //linha=v, coluna=i
         for(int h = 1; h<bean.retorna((String)comboCodigo.getSelectedItem()).size(); h++){
+                if(cancelar){ 
+                    txStatus.setText("Tarefa cancelada pelo usuario!");
+                    break;
+                }
                 String status=bean.retorna((String)comboStatus.getSelectedItem()).get(h);
                 if(mapa.contains(status.toUpperCase())){
                     ArquivosBean ab = new ArquivosBean();
@@ -292,12 +363,15 @@ public class ControllerMenu implements ActionListener, MouseListener{
                     ((ArrayList)cliente.get(v)).add(status);
                     ((ArrayList)cliente.get(v)).add(nome);
                     ((ArrayList)cliente.get(v)).add(cnpj);
-                    String retornoNome = pegaNoNome(diretorio1, codigo, false, ab);
-                    ((ArrayList)cliente.get(v)).add(retornoNome);//buscar codigo no nome
-                    String retornoCNPJ = buscarNoConteudo(diretorio1, cnpj, true, ab);
-                    //((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, nome.trim(), false, ab));//não buscar nome no conteudo
-                    ((ArrayList)cliente.get(v)).add(retornoCNPJ);//buscar cnpjnoconteudo
-                    
+                    if(!txCaminhoPDF.getText().equals("")){
+                        ((ArrayList)cliente.get(v)).add(pegaNoNome(diretorio1, codigo, false, ab));//buscar codigo no nome
+                        ((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
+                    }
+                    else{
+                        ((ArrayList)cliente.get(v)).add("");//buscar codigo no nome
+                        ((ArrayList)cliente.get(v)).add("");//buscar cnpjnoconteudo
+                    }
+                        
                     if(!txCaminhoOutros.getText().equals("")){//se o caminho outros foi informado ele vai adicionar valor
                         ((ArrayList)cliente.get(v)).add(pegaNoNome(diretorioOpcional, 
                                 cnpj.replace("/", "").replace("-", "").replace(".", ""), true, ab));//pegar cnpj do nome do arquivo
@@ -319,9 +393,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
         }catch(InterruptedException e){
             e.printStackTrace();
         }  
-        tabela.preencherTabela(jTable1, cliente);
-        ExcelDao excel = new ExcelDao();
-        excel.exportToExcel(cliente);
+        tabela.preencherTabela(tbPrincipal, cliente);
         
 //        for(int i = 0; i < cliente.size();i++){
 //            for(int j = 0; j < ((ArrayList)cliente.get(i)).size(); j++){
@@ -376,7 +448,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
             if(f.isFile()){
                 String arq = Normalizer.normalize(f.getName().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
                 if(!morto.contains(f) && arq.contains(valor)){
-                    Leitora leitoraPDF = new Leitora();
+                    LeitoraPdf leitoraPDF = new LeitoraPdf();
                     if(leitoraPDF.verificarTexto(f, valorProcurado)){
                         if(encontrado.equals("Não Existe"))
                             encontrado = f.getName();
@@ -393,7 +465,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 if(f.isFile()){
                     String arq = Normalizer.normalize(f.getName().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
                     if(!morto.contains(f) && arq.contains(valor)){
-                        Leitora leitoraPDF = new Leitora();
+                        LeitoraPdf leitoraPDF = new LeitoraPdf();
                         if(leitoraPDF.verificarTexto(f, valorProcurado)){
                             if(encontrado.equals("Não Existe"))
                                 encontrado = f.getName();
@@ -436,7 +508,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private String carregarArquivo(boolean mostrarArquivos, String title){
+    private String carregarArquivo(boolean mostrarArquivos, boolean salvar, String title){
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(mostrarArquivos);
         chooser.setDialogTitle(title);
@@ -448,11 +520,18 @@ public class ControllerMenu implements ActionListener, MouseListener{
             if(retorno==JFileChooser.OPEN_DIALOG)
                 local = chooser.getSelectedFile().getPath();
         }
-        else{
+        else if(salvar==false){
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int retorno = chooser.showOpenDialog(null);
             if(retorno==JFileChooser.APPROVE_OPTION)
                 local = chooser.getSelectedFile().getAbsolutePath();//
+        }
+        else if(salvar){
+            chooser.addChoosableFileFilter(new FileNameExtensionFilter("Planilha do Excel (*.xls)", ".xls"));
+        int retorno = chooser.showSaveDialog(null);
+            if(retorno==JFileChooser.APPROVE_OPTION){
+                local = chooser.getSelectedFile().getAbsolutePath(); //
+            }
         }
         return local;
     }
@@ -476,5 +555,12 @@ public class ControllerMenu implements ActionListener, MouseListener{
         }
         else
             return nome;
+    }
+    private void mostrarIcones(JTextField text, JLabel label){
+        if(text.getText().equals("")){
+            label.setIcon(new ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconX.png")));
+        }
+        else
+            label.setIcon(new ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconV.png")));
     }
 }
