@@ -1,7 +1,12 @@
 package br.com.tiagods.view;
 
 import br.com.tiagods.controller.ControllerMenu;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -38,7 +43,7 @@ public class Menu extends javax.swing.JFrame {
         txCaminhoArquivo = new javax.swing.JTextField();
         btCarregarArquivo = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbPrincipal = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         txView3 = new javax.swing.JTextField();
         comboStatus2 = new javax.swing.JComboBox<>();
@@ -87,6 +92,9 @@ public class Menu extends javax.swing.JFrame {
         txStatus = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         btAbrirSobre = new javax.swing.JButton();
+        btExcel = new javax.swing.JButton();
+        btRelatorio = new javax.swing.JButton();
+        btCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,11 +104,11 @@ public class Menu extends javax.swing.JFrame {
         jLabel2.setText("Informe o arquivo(xls, xlsx):");
 
         btCarregarArquivo.setBackground(new java.awt.Color(255, 255, 255));
-        btCarregarArquivo.setText("Carregar");
+        btCarregarArquivo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/carregar.jpg"))); // NOI18N
         btCarregarArquivo.setActionCommand("CarregarArquivo");
         btCarregarArquivo.addActionListener(controller);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbPrincipal.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -116,12 +124,17 @@ public class Menu extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(70);
-            jTable1.getColumnModel().getColumn(1).setMaxWidth(80);
-            jTable1.getColumnModel().getColumn(2).setMaxWidth(100);
-            jTable1.getColumnModel().getColumn(3).setMaxWidth(50);
+        TableCellRenderer tcr = new Colorir();
+        TableColumn column =
+        tbPrincipal.getColumnModel().getColumn(5);
+        column.setCellRenderer(tcr);
+        jScrollPane1.setViewportView(tbPrincipal);
+        if (tbPrincipal.getColumnModel().getColumnCount() > 0) {
+            tbPrincipal.getColumnModel().getColumn(0).setMaxWidth(70);
+            tbPrincipal.getColumnModel().getColumn(1).setMaxWidth(80);
+            tbPrincipal.getColumnModel().getColumn(2).setMaxWidth(100);
+            tbPrincipal.getColumnModel().getColumn(3).setMinWidth(100);
+            tbPrincipal.getColumnModel().getColumn(3).setPreferredWidth(100);
         }
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -249,11 +262,6 @@ public class Menu extends javax.swing.JFrame {
 
         comboNome.setActionCommand("FocusLost2");
         comboNome.addActionListener(controller);
-        comboNome.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboNomeActionPerformed(evt);
-            }
-        });
 
         comboCNPJ.setActionCommand("FocusLost3");
         comboCNPJ.addActionListener(controller);
@@ -263,27 +271,26 @@ public class Menu extends javax.swing.JFrame {
         jLabel5.setText("Adicionar  - Nome de Arquivo:");
 
         txBuscarNome.setToolTipText("");
-        txBuscarNome.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txBuscarNomeActionPerformed(evt);
-            }
-        });
 
         jLabel6.setText("Limitar Nome (Palavras)");
 
         btDelimitador.setBackground(new java.awt.Color(255, 255, 255));
         btDelimitador.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/question.png"))); // NOI18N
-        btDelimitador.setOpaque(false);
+        btDelimitador.setBorder(null);
+        btDelimitador.setBorderPainted(false);
+        btDelimitador.setContentAreaFilled(false);
         btDelimitador.setActionCommand("abrirDelimitador");
         btDelimitador.addActionListener(controller);
 
-        btAvancar.setText("Avançar");
+        btAvancar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/play.jpg"))); // NOI18N
         btAvancar.setActionCommand("Iniciar");
         btAvancar.addActionListener(controller);
 
         btNomeArquivo.setBackground(new java.awt.Color(255, 255, 255));
         btNomeArquivo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/question.png"))); // NOI18N
-        btNomeArquivo.setOpaque(false);
+        btNomeArquivo.setBorder(null);
+        btNomeArquivo.setBorderPainted(false);
+        btNomeArquivo.setContentAreaFilled(false);
         btNomeArquivo.setActionCommand("abrirNomeArquivo");
         btNomeArquivo.addActionListener(controller);
 
@@ -304,17 +311,18 @@ public class Menu extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btDelimitador, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btNomeArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addComponent(btAvancar)
-                .addContainerGap())
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(btNomeArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(btAvancar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(40, 40, 40))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btAvancar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btAvancar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -328,7 +336,7 @@ public class Menu extends javax.swing.JFrame {
                                 .addGap(3, 3, 3)
                                 .addComponent(txBuscarNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(btNomeArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/refresh.jpg"))); // NOI18N
@@ -390,7 +398,7 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(txView5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -420,14 +428,14 @@ public class Menu extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(8, 8, 8))
         );
 
         jButton14.setActionCommand("Refresh");
         jButton14.addActionListener(controller);
 
         btCarregarDir.setBackground(new java.awt.Color(255, 255, 255));
-        btCarregarDir.setText("Carregar");
+        btCarregarDir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/carregar.jpg"))); // NOI18N
         btCarregarDir.setActionCommand("CarregarDir");
         btCarregarDir.addActionListener(controller);
 
@@ -435,13 +443,15 @@ public class Menu extends javax.swing.JFrame {
         jLabel12.setText("Comprovantes de Operações(PDF):");
 
         btCarregarDirOutros.setBackground(new java.awt.Color(255, 255, 255));
-        btCarregarDirOutros.setText("Carregar");
+        btCarregarDirOutros.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/carregar.jpg"))); // NOI18N
         btCarregarDirOutros.setActionCommand("CarregarOutros");
         btCarregarDirOutros.addActionListener(controller);
 
         jLabel13.setBackground(new java.awt.Color(255, 255, 255));
         jLabel13.setText("Outros arquivos(Opcional):");
 
+        txStatus.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txStatus.setForeground(new java.awt.Color(51, 51, 255));
         txStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         jLabel14.setFont(new java.awt.Font("Palatino Linotype", 3, 24)); // NOI18N
@@ -450,9 +460,32 @@ public class Menu extends javax.swing.JFrame {
 
         btAbrirSobre.setBackground(new java.awt.Color(255, 255, 255));
         btAbrirSobre.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/question.png"))); // NOI18N
-        btAbrirSobre.setOpaque(false);
+        btAbrirSobre.setBorder(null);
+        btAbrirSobre.setBorderPainted(false);
+        btAbrirSobre.setContentAreaFilled(false);
         btAbrirSobre.setActionCommand("abrirSobre");
         btAbrirSobre.addActionListener(controller);
+
+        btExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/excel.jpg"))); // NOI18N
+        btExcel.setToolTipText("Exportar o resultado para um arquivo excel");
+        btExcel.setContentAreaFilled(false);
+        btExcel.setOpaque(false);
+        btExcel.setActionCommand("Exportar");
+        btExcel.addActionListener(controller);
+
+        btRelatorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/relatorio.png"))); // NOI18N
+        btRelatorio.setToolTipText("Gerar relatorio com o resultado obtido");
+        btRelatorio.setContentAreaFilled(false);
+        btRelatorio.setOpaque(false);
+        btRelatorio.setActionCommand("Relatorio");
+        btRelatorio.addActionListener(controller);
+
+        btCancelar.setBackground(new java.awt.Color(255, 255, 255));
+        btCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconX.png"))); // NOI18N
+        btCancelar.setToolTipText("Cancelar Operação Atual");
+        btCancelar.setContentAreaFilled(false);
+        btCancelar.setActionCommand("Cancelar");
+        btCancelar.addActionListener(controller);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -464,39 +497,43 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(txStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(211, 211, 211))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel12)
                             .addComponent(jLabel2)
                             .addComponent(jLabel13))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txCaminhoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txCaminhoPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txCaminhoArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(txCaminhoPDF)
+                            .addComponent(txCaminhoOutros)
+                            .addComponent(txCaminhoArquivo))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txIconValido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btCarregarArquivo))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txIconValido1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btCarregarDir))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txIconValido2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btCarregarDirOutros))))
+                            .addComponent(txIconValido2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txIconValido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txIconValido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btCarregarArquivo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btCarregarDir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btCarregarDirOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                        .addGap(32, 32, 32))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 659, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btAbrirSobre, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 659, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btAbrirSobre, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(4, 4, 4))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(txStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btCancelar)
+                                .addGap(210, 210, 210)
+                                .addComponent(btRelatorio, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(24, 24, 24)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -509,29 +546,33 @@ public class Menu extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
-                        .addComponent(btCarregarArquivo)
-                        .addComponent(txCaminhoArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btCarregarArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txCaminhoArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txIconValido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel12)
-                        .addComponent(btCarregarDir)
-                        .addComponent(txCaminhoPDF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txIconValido1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btCarregarDir, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txCaminhoPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txIconValido1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel13)
-                        .addComponent(btCarregarDirOutros)
-                        .addComponent(txCaminhoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txIconValido2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btCarregarDirOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txCaminhoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txIconValido2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btRelatorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btExcel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -549,14 +590,6 @@ public class Menu extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txBuscarNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txBuscarNomeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txBuscarNomeActionPerformed
-
-    private void comboNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboNomeActionPerformed
-
-    }//GEN-LAST:event_comboNomeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -598,11 +631,14 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JButton btAddTodos;
     public static javax.swing.JButton btAddUm;
     private javax.swing.JButton btAvancar;
+    public static javax.swing.JButton btCancelar;
     public static javax.swing.JButton btCarregarArquivo;
     public static javax.swing.JButton btCarregarDir;
     public static javax.swing.JButton btCarregarDirOutros;
     public static javax.swing.JButton btDelimitador;
+    private javax.swing.JButton btExcel;
     public static javax.swing.JButton btNomeArquivo;
+    private javax.swing.JButton btRelatorio;
     public static javax.swing.JButton btRemoveTodos;
     public static javax.swing.JButton btRemoveUm;
     public static javax.swing.JCheckBox cbFiltro;
@@ -631,9 +667,9 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    public static javax.swing.JTable jTable1;
     public static javax.swing.JTable jTable2;
     public static javax.swing.JTable jTable3;
+    public static javax.swing.JTable tbPrincipal;
     public static javax.swing.JTextField txBuscarNome;
     public static javax.swing.JTextField txCaminhoArquivo;
     public static javax.swing.JTextField txCaminhoOutros;
@@ -649,4 +685,31 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JTextField txView4;
     public static javax.swing.JTextField txView5;
     // End of variables declaration//GEN-END:variables
+class Colorir extends JLabel implements TableCellRenderer{
+    public Colorir(){
+        this.setOpaque(true);
+    }
+  
+    public Component getTableCellRendererComponent(
+        JTable table, 
+        Object value, boolean isSelected, boolean hasFocus,
+           int row, int column){
+
+        if(value.toString().equals("Não Existe")){
+          setBackground(Color.RED);	
+        }
+        else{
+          setBackground(table.getBackground());		
+        }
+        setText(value.toString());
+        return this;   	
+    }
+  
+  public void validate() {}
+  public void revalidate() {}
+  protected void firePropertyChange(String propertyName,
+     Object oldValue, Object newValue) {}
+  public void firePropertyChange(String propertyName,
+     boolean oldValue, boolean newValue) {}
+}
 }
