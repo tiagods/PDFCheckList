@@ -7,7 +7,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 
-public class Leitora {
+public class LeitoraPdf {
     public boolean verificarTexto(File arquivo, String texto){
             PDDocument pdfDocumento = null;
             try{    

@@ -4,8 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import jxl.WorkbookSettings;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -67,12 +77,11 @@ public class PlanilhaDao {
                 }
                 records++;
             }
+            inputStream.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        } finally{
-            try{if(inputStream!=null)inputStream.close();}catch(IOException e){}
         }
     }
     class Contador implements Runnable{
@@ -95,4 +104,70 @@ public class PlanilhaDao {
         Thread thread = new Thread(contador);
         thread.start();
     }
+    public void exportToExcel(ArrayList lista, File arquivo){
+        
+        int row=0;
+        //formato fuente para el contenido contenido
+        WritableFont wf = new WritableFont( WritableFont.ARIAL, 12, WritableFont.NO_BOLD );
+        WritableCellFormat cf = new WritableCellFormat(wf);    
+        
+        //Interfaz para una hoja de cálculo
+        WritableSheet excelSheet = null;
+        WritableWorkbook workbook = null;
+        
+        //Establece la configuración regional para generar la hoja de cálculo
+        WorkbookSettings wbSettings = new WorkbookSettings();
+        wbSettings.setLocale(new Locale("en", "EN"));
+        
+        try {
+            workbook = jxl.Workbook.createWorkbook( arquivo, wbSettings );
+        } catch (IOException ex) {}
+        workbook.createSheet( "Lista", 0 );
+        excelSheet = workbook.getSheet(0);
+        
+        for(int i = 0; i< lista.size(); i++){
+            Label codigo = null, status = null, nome = null, cnpj = null, 
+                    statusCodigo = null, statusCNPJ = null, 
+                    observacao = null;
+            if(i==0){
+                codigo= new Label(0 ,i, "Codigo" , cf );
+                status = new Label(1 ,i, "Status"  , cf );
+                nome = new Label(2, i, "Nome" , cf );
+                cnpj  = new Label(3, i , "CNPJ" , cf );                  
+                statusCodigo= new Label( 4, i, "Status Codigo" , cf );  
+                statusCNPJ= new Label(5 ,i, "Status CNPJ"  , cf );
+                observacao= new Label(6, i, "Outros Arquivos"  , cf );
+            }
+            else{
+                codigo= new Label(0 ,i, (String)((ArrayList)lista.get(i)).get(0) , cf );
+                status = new Label(1 ,i, (String)((ArrayList)lista.get(i)).get(1)  , cf );
+                nome = new Label(2, i, (String)((ArrayList)lista.get(i)).get(2) , cf );
+                cnpj  = new Label(3, i , (String)((ArrayList)lista.get(i)).get(3) , cf );                  
+                statusCodigo= new Label( 4, i, (String)((ArrayList)lista.get(i)).get(4) , cf ); 
+                statusCNPJ= new Label(5 ,i, (String)((ArrayList)lista.get(i)).get(5)  , cf );
+                observacao= new Label(6, i, (String)((ArrayList)lista.get(i)).get(6)  , cf );
+            }
+            try {
+                excelSheet.addCell( codigo );
+                excelSheet.addCell( status );
+                excelSheet.addCell( nome );
+                excelSheet.addCell( cnpj );
+                excelSheet.addCell( statusCodigo );
+                excelSheet.addCell( statusCNPJ );
+                excelSheet.addCell( observacao );
+            } catch (WriteException ex) {
+            System.err.println(  ex.getMessage() );
+            } 
+        }
+        
+        try {
+            workbook.write();
+            workbook.close();
+            JOptionPane.showMessageDialog(null, "Um relatorio em excel foi gerado na sua area de trabalho com nome de Relatorio.xls");
+        }catch (WriteException ex) {
+           System.err.println(  ex.getMessage() );
+        }catch (IOException ex) {
+            System.err.println(  ex.getMessage() );
+        }
+}
 }

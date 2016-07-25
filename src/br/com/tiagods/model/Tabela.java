@@ -7,6 +7,7 @@ package br.com.tiagods.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -103,5 +104,21 @@ public void addUmOrRemoveUm(JTable tabela1, JTable tabela2, String action, Strin
     else
         JOptionPane.showMessageDialog(null, "Não há valores na tabela para "+action+"!");
 }
-
+public List<CadastroBean> pegarDadosTabela(JTable tabela){
+    DefaultTableModel tb = (DefaultTableModel)tabela.getModel();
+    List<CadastroBean> lista = new ArrayList();
+    
+    for(int i =0; i<tb.getRowCount(); i++){
+        CadastroBean cb = new CadastroBean();
+        cb.setCodigo((String)tb.getValueAt(i, 0));
+        cb.setStatus((String)tb.getValueAt(i, 1));
+        cb.setNome((String)tb.getValueAt(i, 2));
+        cb.setCnpj((String)tb.getValueAt(i, 3));
+        cb.setStatusCodigo((String)tb.getValueAt(i, 4));
+        cb.setStatusCnpj((String)tb.getValueAt(i, 5));
+        cb.setObservacao((String)tb.getValueAt(i, 6));
+        lista.add(cb);
+    }
+    return lista;
+}
 }
