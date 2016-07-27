@@ -258,6 +258,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 if(!export.equals("") && cliente!=null){
                    PlanilhaDao planilha = new PlanilhaDao();
                    planilha.exportToExcel(cliente, new File(export+".xls"));
+                   
                 }
                 else
                     JOptionPane.showMessageDialog(null, "Não existe dados para gerar relatorio!");

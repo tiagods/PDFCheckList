@@ -136,7 +136,7 @@ public class PlanilhaDao {
                 cnpj  = new Label(3, i , "CNPJ" , cf );                  
                 statusCodigo= new Label( 4, i, "Status Codigo" , cf );  
                 statusCNPJ= new Label(5 ,i, "Status CNPJ"  , cf );
-                observacao= new Label(6, i, "Outros Arquivos"  , cf );
+                observacao= new Label(6, i, "Arquivos Extras"  , cf );
             }
             else{
                 codigo= new Label(0 ,i, (String)((ArrayList)lista.get(i)).get(0) , cf );
@@ -163,7 +163,7 @@ public class PlanilhaDao {
         try {
             workbook.write();
             workbook.close();
-            JOptionPane.showMessageDialog(null, "Um relatorio em excel foi gerado na sua area de trabalho com nome de Relatorio.xls");
+            JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso");
         }catch (WriteException ex) {
            System.err.println(  ex.getMessage() );
         }catch (IOException ex) {
