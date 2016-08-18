@@ -38,7 +38,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Tiago
  */
 public class ControllerMenu implements ActionListener, MouseListener{
-    ArrayList cliente;//array pai, nele serão armazenados todos os clientes
+    @SuppressWarnings("rawtypes")
+	ArrayList cliente;//array pai, nele serão armazenados todos os clientes
     PlanilhaBean bean;
     Tabela tabela;//classe que trata e cuida das tabelas da Classe Menu
     List<String> listaStatus; //lista de todos os status
@@ -66,6 +67,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
         mostrarIcones(txCaminhoPDF, txIconValido1);
         mostrarIcones(txCaminhoOutros,txIconValido2);                    
     }
+
     public void travarCampos(JPanel panel){//metodo para travar campos para não edição
         for(int i =0; i<panel.getComponentCount();i++){
             if(panel.getComponent(i) instanceof JTextField)
@@ -135,7 +137,13 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 break;
             
             case "CarregarArquivo":
-                caminho = carregarArquivo(true, false, "Abrir Arquivo...");
+//            	limparComponents();
+            	if(tabela==null)
+            		tabela = new Tabela();
+            	tabela.limparTabela(tbPrincipal);
+            	tabela.limparTabela(jTable2);
+            	tabela.limparTabela(jTable3);
+            	caminho = carregarArquivo(true, false, "Abrir Arquivo...");
                 File arquivo  = new File(caminho);
                 if(arquivo.getName().equals("Cadastro.xls")){
                     FileOutputStream system = null;
@@ -226,19 +234,23 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 }
                 break;
             case "AddUm":
-                tabela=new Tabela();
+                if(tabela==null)
+                	tabela=new Tabela();
                 tabela.addUmOrRemoveUm(jTable2, jTable3, "adicionar", "tabela 1");
                 break;
             case "AddTodos":
-                tabela=new Tabela();
+            	if(tabela==null)
+            		tabela=new Tabela();
                 tabela.addTudoOrRemoveTudo(jTable2, jTable3);
                 break;
             case "RemoveUm":
-                tabela=new Tabela();
+            	if(tabela==null)
+                	tabela=new Tabela();
                 tabela.addUmOrRemoveUm(jTable3, jTable2, "remover", "tabela 2");
                 break;
             case "RemoveTodos":
-                tabela=new Tabela();
+            	if(tabela==null)
+                	tabela=new Tabela();
                 tabela.addTudoOrRemoveTudo(jTable3, jTable2);
                 break;
             case "abrirDelimitador":
@@ -265,7 +277,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 
                 break;
             case "Relatorio":
-                tabela = new Tabela();
+            	if(tabela==null)
+                	tabela = new Tabela();
                 List<CadastroBean> lista;
                 lista = tabela.pegarDadosTabela(tbPrincipal);
                 if(!lista.isEmpty()){
@@ -302,11 +315,11 @@ public class ControllerMenu implements ActionListener, MouseListener{
     }
     
     public void refresh(){
-        txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0));
-        txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0));
-        txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
-        txView4.setText(bean.retorna((String)comboStatus.getSelectedItem()).get(0));
-        txView5.setText(bean.retorna((String)comboStatus2.getSelectedItem()).get(0));
+    	txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCodigo.getSelectedItem()).get(0) );
+        txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0)==null ? "": bean.retorna((String)comboNome.getSelectedItem()).get(0));
+        txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
+        txView4.setText(bean.retorna((String)comboStatus.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus.getSelectedItem()).get(0));
+        txView5.setText(bean.retorna((String)comboStatus2.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus2.getSelectedItem()).get(0));
                 
     }
     
@@ -396,12 +409,6 @@ public class ControllerMenu implements ActionListener, MouseListener{
         }  
         tabela.preencherTabela(tbPrincipal, cliente);
         
-//        for(int i = 0; i < cliente.size();i++){
-//            for(int j = 0; j < ((ArrayList)cliente.get(i)).size(); j++){
-//                System.out.print((String)((ArrayList)cliente.get(i)).get(j)+"\n");
-//             }
-//        System.out.println();
-//        }
         }
     }
     private synchronized String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
