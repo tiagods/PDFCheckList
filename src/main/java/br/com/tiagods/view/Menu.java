@@ -1,23 +1,20 @@
 package br.com.tiagods.view;
 
-import br.com.tiagods.controller.ControllerMenu;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+import br.com.tiagods.controller.ControllerMenu;
 
-/**
- *
- * @author Tiago
- */
 public class Menu extends javax.swing.JFrame {
     /**
      * Creates new form Menu
@@ -113,7 +110,7 @@ public class Menu extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Codigo", "Status", "Nome", "CNPJ", "Status Codigo", "Status CNPJ", "Observação"
+                "Codigo", "Status", "Nome", "CNPJ", "Status Codigo", "Status CNPJ", "Observa��o"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -260,7 +257,7 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel9.setText("CNPJ:");
 
-        jLabel10.setText("Colunas: 1ª Linha é o nome da Coluna");
+        jLabel10.setText("Colunas: 1\u00AA Linha \u00E9 o nome da Coluna");
 
         comboCodigo.setActionCommand("FocusLost1");
         comboCodigo.addActionListener(controller);
@@ -448,7 +445,7 @@ public class Menu extends javax.swing.JFrame {
         btCarregarDir.addActionListener(controller);
 
         jLabel12.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel12.setText("Comprovantes de Operações(PDF):");
+        jLabel12.setText("Comprovantes de Opera\u00E7\u00F5es(PDF):");
 
         btCarregarDirOutros.setBackground(new java.awt.Color(255, 255, 255));
         btCarregarDirOutros.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/carregar.jpg"))); // NOI18N
