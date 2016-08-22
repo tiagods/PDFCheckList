@@ -8,6 +8,9 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 
 public class LeitoraPdf {
+	
+	StringBuilder sb = new StringBuilder();
+    
     public boolean verificarTexto(File arquivo, String texto){
             PDDocument pdfDocumento = null;
             try{    
@@ -15,9 +18,8 @@ public class LeitoraPdf {
                     if(extensao.equals("pdf")){
                         pdfDocumento = PDDocument.load(arquivo);
                         PDFTextStripper stripper = new PDFTextStripper();
-                        StringBuilder sb = new StringBuilder();
                         sb.append(stripper.getText(pdfDocumento));
-
+                        
                         if(sb.toString().toUpperCase().contains(texto.toUpperCase()))
                             return true;
                     }
@@ -29,5 +31,8 @@ public class LeitoraPdf {
                     if(pdfDocumento != null) try{pdfDocumento.close();}catch(IOException e){}
             }
             return false;
+    }
+    public boolean conseguiLer(){
+    	return (sb.toString().trim().equals(""));
     }
 }

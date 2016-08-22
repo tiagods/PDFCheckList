@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -104,7 +105,7 @@ public class PlanilhaDao {
         Thread thread = new Thread(contador);
         thread.start();
     }
-    public void exportToExcel(ArrayList lista, File arquivo){
+    public void exportToExcel(List<CadastroBean> lista, File arquivo){
         
         int row=0;
         //formato fuente para el contenido contenido
@@ -122,44 +123,50 @@ public class PlanilhaDao {
         try {
             workbook = jxl.Workbook.createWorkbook( arquivo, wbSettings );
         } catch (IOException ex) {}
-        workbook.createSheet( "Lista", 0 );
+        workbook.createSheet( "Relatorio", 0 );
         excelSheet = workbook.getSheet(0);
         
-        for(int i = 0; i< lista.size(); i++){
-            Label codigo = null, status = null, nome = null, cnpj = null, 
-                    statusCodigo = null, statusCNPJ = null, 
-                    observacao = null;
-            if(i==0){
-                codigo= new Label(0 ,i, "Codigo" , cf );
-                status = new Label(1 ,i, "Status"  , cf );
-                nome = new Label(2, i, "Nome" , cf );
-                cnpj  = new Label(3, i , "CNPJ" , cf );                  
-                statusCodigo= new Label( 4, i, "Status Codigo" , cf );  
-                statusCNPJ= new Label(5 ,i, "Status CNPJ"  , cf );
-                observacao= new Label(6, i, "Arquivos Extras"  , cf );
-            }
-            else{
-                codigo= new Label(0 ,i, (String)((ArrayList)lista.get(i)).get(0) , cf );
-                status = new Label(1 ,i, (String)((ArrayList)lista.get(i)).get(1)  , cf );
-                nome = new Label(2, i, (String)((ArrayList)lista.get(i)).get(2) , cf );
-                cnpj  = new Label(3, i , (String)((ArrayList)lista.get(i)).get(3) , cf );                  
-                statusCodigo= new Label( 4, i, (String)((ArrayList)lista.get(i)).get(4) , cf ); 
-                statusCNPJ= new Label(5 ,i, (String)((ArrayList)lista.get(i)).get(5)  , cf );
-                observacao= new Label(6, i, (String)((ArrayList)lista.get(i)).get(6)  , cf );
-            }
+        Label codigo= new Label(0 ,0, "Codigo" , cf );
+        Label status = new Label(1 ,0, "Status"  , cf );
+        Label nome = new Label(2, 0, "Nome" , cf );
+        Label cnpj  = new Label(3, 0 , "CNPJ" , cf );                  
+        Label statusCodigo= new Label( 4, 0, "Status Codigo" , cf );  
+        Label statusCNPJ= new Label(5 ,0, "Status CNPJ"  , cf );
+        Label observacao= new Label(6,0, "Arquivos Extras"  , cf );
+        try {
+            excelSheet.addCell( codigo );
+            excelSheet.addCell( status );
+            excelSheet.addCell( nome );
+            excelSheet.addCell( cnpj );
+            excelSheet.addCell( statusCodigo );
+            excelSheet.addCell( statusCNPJ );
+            excelSheet.addCell( observacao );
+        } catch (WriteException ex) {
+        System.err.println(  ex.getMessage() );
+        } 
+        int j=1;
+        
+        for(CadastroBean cb : lista){
+            	codigo= new Label(0 ,j, cb.getCodigo(), cf );
+                status = new Label(1 ,j, cb.getStatus(), cf );
+                nome = new Label(2, j, cb.getNome(), cf );
+                cnpj  = new Label(3, j , cb.getCnpj(), cf );                  
+                statusCodigo= new Label( 4, j, cb.getStatusCodigo(), cf ); 
+                statusCNPJ= new Label(5 , j, cb.getStatusCnpj(), cf );
+                observacao= new Label(6, j, cb.getObservacao(), cf );
             try {
-                excelSheet.addCell( codigo );
-                excelSheet.addCell( status );
-                excelSheet.addCell( nome );
-                excelSheet.addCell( cnpj );
-                excelSheet.addCell( statusCodigo );
-                excelSheet.addCell( statusCNPJ );
-                excelSheet.addCell( observacao );
+                excelSheet.addCell(codigo);
+                excelSheet.addCell(status);
+                excelSheet.addCell(nome);
+                excelSheet.addCell(cnpj);
+                excelSheet.addCell(statusCodigo);
+                excelSheet.addCell(statusCNPJ);
+                excelSheet.addCell(observacao);
             } catch (WriteException ex) {
             System.err.println(  ex.getMessage() );
             } 
+            j++;
         }
-        
         try {
             workbook.write();
             workbook.close();

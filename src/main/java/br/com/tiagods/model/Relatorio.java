@@ -6,6 +6,9 @@
 package br.com.tiagods.model;
 
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -21,7 +24,7 @@ import net.sf.jasperreports.view.JasperViewer;
 public class Relatorio {
     private String path; //Caminho base
 	
-	private String pathToReportPackage; // Caminho para o package onde est�o armazenados os relatorios Jarper
+	private String pathToReportPackage; // Caminho para o package onde estao armazenados os relatorios Jarper
 	
 	//Recupera os caminhos para que a classe possa encontrar os relatorios
 	public Relatorio() {
@@ -33,7 +36,7 @@ public class Relatorio {
 	//Imprime/gera uma lista de Clientes
 	public void imprimir(List<CadastroBean> clientes) {
             try{
-		JasperReport report = JasperCompileManager.compileReport(this.getPathToReportPackage() + "Cadastro.jrxml");
+		JasperReport report = JasperCompileManager.compileReport("utilitarios/Cadastro.jrxml");
 		
 		JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(clientes));
  
@@ -41,7 +44,7 @@ public class Relatorio {
 	
                 JasperViewer.viewReport(print, true);
             }catch(JRException e){
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao gerar relatorio \n"+e);
             }
         }
 	public String getPathToReportPackage() {

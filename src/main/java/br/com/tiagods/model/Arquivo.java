@@ -6,12 +6,21 @@
 package br.com.tiagods.model;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.JOptionPane;
+
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -280,5 +289,40 @@ public class Arquivo {
         }
         else
             lista.add(f);
+    }
+    public boolean gravarTxtInconsistencias(Set<File> file, String arquivo){
+    	File f = new File(arquivo);
+    	if(f.exists())
+    		f.delete();
+			try{
+	    		f.createNewFile();
+	    		StringBuilder builder = new StringBuilder();
+	    		builder.append("Arquivos incompativeis, não foi possivel realizar a leitura do conteudo, necessário intervenção manual"+System.getProperty("line.separator"));
+	    		for(File arq : file){
+	    			builder.append(arq.getAbsolutePath());
+	    			builder.append(System.getProperty("line.separator"));
+	    		}
+	    		FileWriter writer = new FileWriter(f, true);
+	    		writer.write(builder.toString());
+	    		writer.close();
+	    		return true;
+    		}catch(IOException e){
+    			return false;
+    		}
+    }
+    public void copiarArquivosInconsistentes(Set<File> file, File destino) throws IOException{
+    	if (!destino.exists())
+    		destino.mkdir();
+    	else{
+    		File[] lista = destino.listFiles();
+    		for(File f : lista)
+    			f.delete();
+    	}
+    	for(File arquivo : file){ 
+	    	 File fileFinal = new File(destino+"/"+arquivo.getName());
+	        	 Path pathI = Paths.get(arquivo.getAbsolutePath());
+	             Path pathO = Paths.get(fileFinal.getAbsolutePath());
+	             Files.copy(pathI, pathO, StandardCopyOption.REPLACE_EXISTING);
+	    }
     }
 }

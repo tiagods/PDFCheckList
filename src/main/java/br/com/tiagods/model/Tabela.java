@@ -25,8 +25,20 @@ public class Tabela {
             tbm.addRow(new Object[1]);
             Iterator<String> iterator = ((ArrayList)lista.get(linha)).iterator();
             int coluna = 0;
+            boolean achei = false;
             while(iterator.hasNext()){
-                tbm.setValueAt(iterator.next(), linha, coluna);
+            	String valor = iterator.next();
+            	if(coluna==4){//se coluna for 4 retornará verdadeiro para a proxima coluna
+            		if(!valor.equals("Não Existe")){
+            			achei = true;
+            		}
+            	}//enviar novo valor para a coluna de acordo com o criterio recebido
+            	if(coluna==5 && achei==true){
+            		if(valor.equals("Não Existe")){
+            			valor="Erro na Leitura do Arquivo PDF";
+            		}
+            	}
+            	tbm.setValueAt(valor, linha, coluna);
                 coluna++;
             }
             linha++;

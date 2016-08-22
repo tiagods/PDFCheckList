@@ -5,15 +5,35 @@
  */
 package br.com.tiagods.controller;
 
-import br.com.tiagods.model.*;
-import br.com.tiagods.utilitarios.Help;
+import static br.com.tiagods.view.Menu.cbFiltro;
+import static br.com.tiagods.view.Menu.comboCNPJ;
+import static br.com.tiagods.view.Menu.comboCodigo;
+import static br.com.tiagods.view.Menu.comboNome;
+import static br.com.tiagods.view.Menu.comboStatus;
+import static br.com.tiagods.view.Menu.comboStatus2;
+import static br.com.tiagods.view.Menu.jPanel1;
+import static br.com.tiagods.view.Menu.jPanel2;
+import static br.com.tiagods.view.Menu.jTable2;
+import static br.com.tiagods.view.Menu.jTable3;
+import static br.com.tiagods.view.Menu.tbPrincipal;
+import static br.com.tiagods.view.Menu.txBuscarNome;
+import static br.com.tiagods.view.Menu.txCaminhoArquivo;
+import static br.com.tiagods.view.Menu.txCaminhoOutros;
+import static br.com.tiagods.view.Menu.txCaminhoPDF;
+import static br.com.tiagods.view.Menu.txIconValido;
+import static br.com.tiagods.view.Menu.txIconValido1;
+import static br.com.tiagods.view.Menu.txIconValido2;
+import static br.com.tiagods.view.Menu.txStatus;
+import static br.com.tiagods.view.Menu.txView1;
+import static br.com.tiagods.view.Menu.txView2;
+import static br.com.tiagods.view.Menu.txView3;
+import static br.com.tiagods.view.Menu.txView4;
+import static br.com.tiagods.view.Menu.txView5;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JComboBox;
-
-import static br.com.tiagods.view.Menu.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,13 +46,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import br.com.tiagods.model.Arquivo;
+import br.com.tiagods.model.ArquivosBean;
+import br.com.tiagods.model.CadastroBean;
+import br.com.tiagods.model.LeitoraPdf;
+import br.com.tiagods.model.PlanilhaBean;
+import br.com.tiagods.model.PlanilhaDao;
+import br.com.tiagods.model.Relatorio;
+import br.com.tiagods.model.Tabela;
+import br.com.tiagods.utilitarios.Help;
 /**
  *
  * @author Tiago
@@ -47,6 +79,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
     Set<File> morto = new HashSet<>();//lista usada para armazenar arquivos mortos
     Set<String> listaNova;/*lista simples para guardar status não repetidos 
     dos clientes e enviar para tabela*/
+    Set<File> arquivosNaoLidos = new HashSet<>();
     /*
     Colunas para cada tipo de registro / apenas para melhor visualização
     */
@@ -113,7 +146,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 caminho = txCaminhoArquivo.getText();
                 if(!caminho.equals("") && new File(caminho).isFile()){
                     if(!txCaminhoPDF.getText().equals("") || !txCaminhoOutros.getText().equals("")){
-                        if(validarNumero(txDelimitador.getText())){
+                        //if(validarNumero(txDelimitador.getText())){
                             if(txBuscarNome.getText().equals("")){
                                 String comentario = "Se você não informar uma expressão resumida\n "
                                         + "o numero de resultados podem ultrapassar a quantidade de registros além do esperado para cada busca\n"
@@ -126,7 +159,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
                             }
                             else
                                 Time();
-                        }
+                        //}
                     }
                     else
                         JOptionPane.showMessageDialog(null, "Informe um diretorio valido dos arquivos PDF ou para outros arquivos!");
@@ -173,17 +206,17 @@ public class ControllerMenu implements ActionListener, MouseListener{
                         bean = new PlanilhaBean();
                         if(planilha.lerPlanilha(bean, txStatus, new File(caminho))){
                             carregarCombo(comboCodigo, 1);
-                            carregarCombo(comboNome, 2);
-                            carregarCombo(comboCNPJ, 3);
-                            carregarCombo(comboStatus, 4);
-                            carregarCombo(comboStatus2, 5);
+	                        carregarCombo(comboNome, 2);
+	                        carregarCombo(comboCNPJ, 3);
+	                        carregarCombo(comboStatus, 4);
+	                        carregarCombo(comboStatus2, 5);
                             cbFiltro.setSelected(true);
                             refresh();
                             
                             if(!txView5.getText().equals("")){
                                preencherTabela();
                             }
-                            txDelimitador.setText("2");                        
+                                                    
                         }
                         else
                             JOptionPane.showMessageDialog(null, "Não foi possivel ler o arquivo de origem,\n"
@@ -269,7 +302,9 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 String export = carregarArquivo(false, true, "Salvar arquivo");
                 if(!export.equals("") && cliente!=null){
                    PlanilhaDao planilha = new PlanilhaDao();
-                   planilha.exportToExcel(cliente, new File(export+".xls"));
+                   List<CadastroBean> lista;
+                   lista = tabela.pegarDadosTabela(tbPrincipal);
+                   planilha.exportToExcel(lista, new File(export+".xls"));
                    
                 }
                 else
@@ -315,12 +350,15 @@ public class ControllerMenu implements ActionListener, MouseListener{
     }
     
     public void refresh(){
-    	txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCodigo.getSelectedItem()).get(0) );
-        txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0)==null ? "": bean.retorna((String)comboNome.getSelectedItem()).get(0));
-        txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
-        txView4.setText(bean.retorna((String)comboStatus.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus.getSelectedItem()).get(0));
-        txView5.setText(bean.retorna((String)comboStatus2.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus2.getSelectedItem()).get(0));
-                
+    	try{
+	    	txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCodigo.getSelectedItem()).get(0) );
+	        txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0)==null ? "": bean.retorna((String)comboNome.getSelectedItem()).get(0));
+	        txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
+	        txView4.setText(bean.retorna((String)comboStatus.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus.getSelectedItem()).get(0));
+	        txView5.setText(bean.retorna((String)comboStatus2.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus2.getSelectedItem()).get(0));
+    	}catch(IndexOutOfBoundsException ex){
+    		System.out.println("Alguma coluna esta vazia");
+    	}
     }
     
     private void Time(){
@@ -370,7 +408,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
                     ArquivosBean ab = new ArquivosBean();
                     cliente.add(new ArrayList());
                     String codigo=bean.retorna((String)comboCodigo.getSelectedItem()).get(h);
-                    String nome=pegarNovoNome(bean.retorna((String)comboNome.getSelectedItem()).get(h));
+                    String nome=bean.retorna((String)comboNome.getSelectedItem()).get(h);
                     String cnpj=bean.retorna((String)comboCNPJ.getSelectedItem()).get(h);
 
                     ((ArrayList)cliente.get(v)).add(codigo);
@@ -379,7 +417,21 @@ public class ControllerMenu implements ActionListener, MouseListener{
                     ((ArrayList)cliente.get(v)).add(cnpj);
                     if(!txCaminhoPDF.getText().equals("")){
                         ((ArrayList)cliente.get(v)).add(pegaNoNome(diretorio1, codigo, false, ab));//buscar codigo no nome
-                        ((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
+                        
+                        if(!cnpj.trim().equals("99.999.999/9999-99") && !cnpj.trim().equals("") && 
+                        		cnpj.trim().replace(".", "").replace("/", "").replace("-", "").length()>12)//validando cnpj
+                        {	
+                        	try{
+                        		Long.parseLong(cnpj.replace(".", "").replace("/", "").replace("-", "").trim());
+                        		((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
+                        	}catch(NumberFormatException e ){
+                        		e.printStackTrace();
+                        		((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
+                        	}
+                        }
+                        else
+                        	((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
+                        
                     }
                     else{
                         ((ArrayList)cliente.get(v)).add("");//buscar codigo no nome
@@ -408,7 +460,20 @@ public class ControllerMenu implements ActionListener, MouseListener{
             e.printStackTrace();
         }  
         tabela.preencherTabela(tbPrincipal, cliente);
-        
+        if(arquivosNaoLidos.size()>0){
+        	if(arquivo==null)
+        		arquivo = new Arquivo();
+        	String localPathName="resumo";
+        	try{
+        		arquivo.gravarTxtInconsistencias(arquivosNaoLidos, "SFListLog.txt");
+        		arquivo.copiarArquivosInconsistentes(arquivosNaoLidos, new File(localPathName));
+        		
+        	}catch(IOException e){
+        		JOptionPane.showMessageDialog(null, "Erro ao copiar os arquivos \n"+e.getMessage());
+        	}
+        	JOptionPane.showMessageDialog(null, "Foi gerado uma lista de arquivos não lidos, salvo dentro da pasta "+localPathName);
+        	
+        }
         }
     }
     private synchronized String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
@@ -463,6 +528,9 @@ public class ControllerMenu implements ActionListener, MouseListener{
                         else
                             encontrado+=","+f.getName();
                         estaMorto(f);
+                    }//inserir arquivos não lidos em uma arraylist
+                    if(!leitoraPDF.conseguiLer()){
+                    	arquivosNaoLidos.add(f);
                     }
                 }
             }
@@ -552,18 +620,18 @@ public class ControllerMenu implements ActionListener, MouseListener{
             return false;
         }
     }
-    private String pegarNovoNome(String nome){
-        String[] valor = nome.split(" ");
-        String novoValor="";
-        if(valor.length>delimitador){
-            for(int i=0; i<delimitador; i++){
-                novoValor+=valor[i]+" ";
-            }
-            return novoValor;
-        }
-        else
-            return nome;
-    }
+//    private String pegarNovoNome(String nome){
+//        String[] valor = nome.split(" ");
+//        String novoValor="";
+//        if(valor.length>delimitador){
+//            for(int i=0; i<delimitador; i++){
+//                novoValor+=valor[i]+" ";
+//            }
+//            return novoValor;
+//        }
+//        else
+//            return nome;
+//    }
     private void mostrarIcones(JTextField text, JLabel label){
         if(text.getText().equals("")){
             label.setIcon(new ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconX.png")));
