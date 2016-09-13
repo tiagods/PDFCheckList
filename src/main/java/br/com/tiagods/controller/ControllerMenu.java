@@ -89,11 +89,13 @@ public class ControllerMenu implements ActionListener, MouseListener{
     int delimitador;
     
     public void iniciar(){
-        if(!temp.exists())
+        if(temp.exists()){
+        	File[] arqTemp = temp.listFiles();
+	        for(File f : arqTemp)
+	            f.delete();
+        }
+        else
             temp.mkdir();
-        File[] arqTemp = temp.listFiles();
-        for(File f : arqTemp)
-            f.delete();
         travarCampos(jPanel1);
         travarCampos(jPanel2);
         mostrarIcones(txCaminhoArquivo,txIconValido);
@@ -108,7 +110,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
         }
     
     }
-    public void carregarCombo(JComboBox box, int combo){
+    @SuppressWarnings("unchecked")
+	public void carregarCombo(JComboBox box, int combo){
         String[] letra = {"","A","B","C","D","E","F","G","H","I","J","K","L","M",
             "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
         
@@ -342,7 +345,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 listaNova.add(listaStatus.get(i).toUpperCase());
             }
         }
-        Iterator iterator = listaNova.iterator();
+        @SuppressWarnings("rawtypes")
+		Iterator iterator = listaNova.iterator();
         Tabela tabelas = new Tabela();
         tabelas.limparTabela(jTable3);
         tabelas.carregaTodos(jTable2, iterator);
@@ -367,7 +371,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
         time.start();
     }
     public class Iniciar implements Runnable{
-        @Override
+        @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+		@Override
         public void run(){
             
         cliente = new ArrayList();
@@ -390,7 +395,6 @@ public class ControllerMenu implements ActionListener, MouseListener{
             mapa = tabela.pegarValores(jTable2);
         
         int totalRegistros = 0;
-        
         for(String status : bean.retorna((String)comboStatus.getSelectedItem())){
             if(mapa.contains(status.toUpperCase()))
                 totalRegistros++;
@@ -399,61 +403,59 @@ public class ControllerMenu implements ActionListener, MouseListener{
         
         int v = 0; //linha=v, coluna=i
         for(int h = 1; h<bean.retorna((String)comboCodigo.getSelectedItem()).size(); h++){
-                if(cancelar){ 
-                    txStatus.setText("Tarefa cancelada pelo usuario!");
-                    break;
-                }
-                String status=bean.retorna((String)comboStatus.getSelectedItem()).get(h);
-                if(mapa.contains(status.toUpperCase())){
-                    ArquivosBean ab = new ArquivosBean();
-                    cliente.add(new ArrayList());
-                    String codigo=bean.retorna((String)comboCodigo.getSelectedItem()).get(h);
-                    String nome=bean.retorna((String)comboNome.getSelectedItem()).get(h);
-                    String cnpj=bean.retorna((String)comboCNPJ.getSelectedItem()).get(h);
+        	if(cancelar){ 
+        		txStatus.setText("Tarefa cancelada pelo usuario!");
+        		break;
+        	}
+        	String status=bean.retorna((String)comboStatus.getSelectedItem()).get(h);
+        	if(mapa.contains(status.toUpperCase())){
+        		ArquivosBean ab = new ArquivosBean();
+        		cliente.add(new ArrayList());
+        		String codigo=bean.retorna((String)comboCodigo.getSelectedItem()).get(h);
+        		String nome=bean.retorna((String)comboNome.getSelectedItem()).get(h);
+        		String cnpj=bean.retorna((String)comboCNPJ.getSelectedItem()).get(h);
 
-                    ((ArrayList)cliente.get(v)).add(codigo);
-                    ((ArrayList)cliente.get(v)).add(status);
-                    ((ArrayList)cliente.get(v)).add(nome);
-                    ((ArrayList)cliente.get(v)).add(cnpj);
-                    if(!txCaminhoPDF.getText().equals("")){
-                        ((ArrayList)cliente.get(v)).add(pegaNoNome(diretorio1, codigo, false, ab));//buscar codigo no nome
-                        
-                        if(!cnpj.trim().equals("99.999.999/9999-99") && !cnpj.trim().equals("") && 
-                        		cnpj.trim().replace(".", "").replace("/", "").replace("-", "").length()>12)//validando cnpj
-                        {	
-                        	try{
-                        		Long.parseLong(cnpj.replace(".", "").replace("/", "").replace("-", "").trim());
-                        		((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
-                        	}catch(NumberFormatException e ){
-                        		e.printStackTrace();
-                        		((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
-                        	}
-                        }
-                        else
-                        	((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
-                        
-                    }
-                    else{
-                        ((ArrayList)cliente.get(v)).add("");//buscar codigo no nome
-                        ((ArrayList)cliente.get(v)).add("");//buscar cnpjnoconteudo
-                    }
-                        
-                    if(!txCaminhoOutros.getText().equals("")){//se o caminho outros foi informado ele vai adicionar valor
-                        ((ArrayList)cliente.get(v)).add(pegaNoNome(diretorioOpcional, 
-                                cnpj.replace("/", "").replace("-", "").replace(".", ""), true, ab));//pegar cnpj do nome do arquivo
-                    }
-                    else{
-                        ((ArrayList)cliente.get(v)).add("");
-                    }
-                    v++;
-                    txStatus.setText("Processando " +v+ " de " +totalRegistros+" registros! Aguarde...");
-                    
-                }
-                
+        		((ArrayList)cliente.get(v)).add(codigo);
+        		((ArrayList)cliente.get(v)).add(status);
+        		((ArrayList)cliente.get(v)).add(nome);
+        		((ArrayList)cliente.get(v)).add(cnpj);
+        		if(!txCaminhoPDF.getText().equals("")){
+        			((ArrayList)cliente.get(v)).add(pegaNoNome(diretorio1, codigo, false, ab));//buscar codigo no nome
+
+        			if(!cnpj.trim().equals("99.999.999/9999-99") && !cnpj.trim().equals("") && 
+        					cnpj.trim().replace(".", "").replace("/", "").replace("-", "").length()>12)//validando cnpj
+        			{	
+        				try{
+        					Long.parseLong(cnpj.replace(".", "").replace("/", "").replace("-", "").trim());
+        					((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
+        				}catch(NumberFormatException e ){
+        					e.printStackTrace();
+        					((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
+        				}
+        			}
+        			else
+        				((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
+
+        		}
+        		else{
+        			((ArrayList)cliente.get(v)).add("");//buscar codigo no nome
+        			((ArrayList)cliente.get(v)).add("");//buscar cnpjnoconteudo
+        		}
+
+        		if(!txCaminhoOutros.getText().equals("")){//se o caminho outros foi informado ele vai adicionar valor
+        			((ArrayList)cliente.get(v)).add(pegaNoNome(diretorioOpcional, 
+        					cnpj.replace("/", "").replace("-", "").replace(".", ""), true, ab));//pegar cnpj do nome do arquivo
+        		}
+        		else{
+        			((ArrayList)cliente.get(v)).add("");
+        		}
+        		v++;
+        		txStatus.setText("Processando " +v+ " de " +totalRegistros+" registros! Aguarde...");
+        	} 
         }      
         try{
             txStatus.setText("Concluido!!!");
-            Thread.sleep(3000);
+            Thread.sleep(2000);
             txStatus.setText("");
             
         }catch(InterruptedException e){
@@ -464,10 +466,10 @@ public class ControllerMenu implements ActionListener, MouseListener{
         	if(arquivo==null)
         		arquivo = new Arquivo();
         	String localPathName="resumo";
+        	String txtName = "SFList.txt";
         	try{
-        		arquivo.gravarTxtInconsistencias(arquivosNaoLidos, "SFListLog.txt");
+        		arquivo.gravarTxtInconsistencias(arquivosNaoLidos, localPathName+"/"+txtName);
         		arquivo.copiarArquivosInconsistentes(arquivosNaoLidos, new File(localPathName));
-        		
         	}catch(IOException e){
         		JOptionPane.showMessageDialog(null, "Erro ao copiar os arquivos \n"+e.getMessage());
         	}
@@ -478,9 +480,17 @@ public class ControllerMenu implements ActionListener, MouseListener{
     }
     private synchronized String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
         String encontrado = "Não Existe";
-        String valor = ".";
+        List<String> list = new ArrayList<>();;
         if(!txBuscarNome.getText().equals("")){
-            valor = Normalizer.normalize(txBuscarNome.getText().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+            //valor = Normalizer.normalize(txBuscarNome.getText().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+            
+            String[] lista = txBuscarNome.getText().split(",");
+            for(String s : lista){
+            	if(!s.trim().equals("")){
+            		list.add(Normalizer.normalize(s.trim().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
+            	}
+            }
+        
         }
         for(int i = 0; i< arquivos.size(); i++){
             if(arquivos.get(i).isFile()){
@@ -496,13 +506,21 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 }
                 else{//buscara nome
                     String arq = Normalizer.normalize(arquivos.get(i).getName().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-                    if(arquivos.get(i).getName().toUpperCase().contains(valorProcurado) && arq.contains(valor)){//verifica se no nome do arquivo existe o valor procurado + dentro do filtro informado
-                        if(encontrado.equals("Não Existe"))
-                            encontrado = arquivos.get(i).getName();
-                        else
-                            encontrado+=","+arquivos.get(i).getName();
-                        ab.setArquivos(arquivos.get(i));
-                    }
+                    String arqSub = (arq.trim()).substring(0, 4);//pegar os 4 primeiros digitos do
+                    
+                    boolean encontrado = "";
+                    list.forEach(c->{
+                    	
+                    });
+                    
+	                if(arqSub.equals(valorProcurado) && list.contains(arq)){//verifica se no nome do arquivo existe o valor procurado + dentro do filtro informado
+	                	if(encontrado.equals("Não Existe"))
+	                		encontrado = arquivos.get(i).getName();
+	                	else
+	                		encontrado+=","+arquivos.get(i).getName();
+	                	ab.setArquivos(arquivos.get(i));
+	                }
+                    
                 }
             }
         }
@@ -513,7 +531,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
     private synchronized String buscarNoConteudo(List<File> lista, String valorProcurado, boolean listar, ArquivosBean ab){
         String encontrado = "Não Existe";
         String valor =".";
-        if(txBuscarNome.getText().equals("")){
+        if(!txBuscarNome.getText().equals("")){
             valor = Normalizer.normalize(txBuscarNome.getText().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
         }
         Set<File> list = ab.getArquivos();
@@ -527,7 +545,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
                             encontrado = f.getName();
                         else
                             encontrado+=","+f.getName();
-                        estaMorto(f);
+                        if(leitoraPDF.totalPages()==1)
+                        	estaMorto(f);
                     }//inserir arquivos não lidos em uma arraylist
                     if(!leitoraPDF.conseguiLer()){
                     	arquivosNaoLidos.add(f);
@@ -547,7 +566,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
                                 encontrado = f.getName();
                             else
                                 encontrado+=","+f.getName();
-                            estaMorto(f);
+                            if(leitoraPDF.totalPages()==1)
+                            	estaMorto(f);
                         }
                     }
                 }
@@ -611,27 +631,6 @@ public class ControllerMenu implements ActionListener, MouseListener{
         }
         return local;
     }
-    private boolean validarNumero(String valor){
-        try{
-            delimitador = Integer.parseInt(valor);
-            return true;
-        }catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(null, "Numero informado no delimitaddor esta inválido, \n por favor corrija!");
-            return false;
-        }
-    }
-//    private String pegarNovoNome(String nome){
-//        String[] valor = nome.split(" ");
-//        String novoValor="";
-//        if(valor.length>delimitador){
-//            for(int i=0; i<delimitador; i++){
-//                novoValor+=valor[i]+" ";
-//            }
-//            return novoValor;
-//        }
-//        else
-//            return nome;
-//    }
     private void mostrarIcones(JTextField text, JLabel label){
         if(text.getText().equals("")){
             label.setIcon(new ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconX.png")));

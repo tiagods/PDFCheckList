@@ -17,6 +17,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
+
 /**
  *
  * @author Tiago
@@ -29,20 +30,18 @@ public class Relatorio {
 	//Recupera os caminhos para que a classe possa encontrar os relatorios
 	public Relatorio() {
 		this.path = this.getClass().getClassLoader().getResource("").getPath();
-		this.pathToReportPackage = this.path + "/br/com/tiagods/utilitarios/";
-	}
-	
-	
+		this.pathToReportPackage = this.path+"br/com/tiagods/utilitarios/";
+	}	
 	//Imprime/gera uma lista de Clientes
 	public void imprimir(List<CadastroBean> clientes) {
-            try{
-		JasperReport report = JasperCompileManager.compileReport("utilitarios/Cadastro.jrxml");
-		
-		JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(clientes));
- 
-		//JasperExportManager.exportReportToPdfFile(print, "c:/psv/Relatorio_de_Clientes.pdf");		
-	
-                JasperViewer.viewReport(print, true);
+        try{
+        	JOptionPane.showMessageDialog(null, "Report Package: "+getPathToReportPackage());
+	        JasperReport report = JasperCompileManager.compileReport(getPathToReportPackage()+"Cadastro.jrxml");
+	        JOptionPane.showMessageDialog(null, "Compilou");
+	        JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(clientes));
+	        JOptionPane.showMessageDialog(null, "Imprimiu");
+	        //JasperExportManager.exportReportToPdfFile(print, desktop+"/relatorio.pdf");		
+            JasperViewer.viewReport(print, true);
             }catch(JRException e){
                 JOptionPane.showMessageDialog(null, "Erro ao gerar relatorio \n"+e);
             }
