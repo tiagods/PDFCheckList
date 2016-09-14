@@ -5,30 +5,7 @@
  */
 package br.com.tiagods.controller;
 
-import static br.com.tiagods.view.Menu.cbFiltro;
-import static br.com.tiagods.view.Menu.comboCNPJ;
-import static br.com.tiagods.view.Menu.comboCodigo;
-import static br.com.tiagods.view.Menu.comboNome;
-import static br.com.tiagods.view.Menu.comboStatus;
-import static br.com.tiagods.view.Menu.comboStatus2;
-import static br.com.tiagods.view.Menu.jPanel1;
-import static br.com.tiagods.view.Menu.jPanel2;
-import static br.com.tiagods.view.Menu.jTable2;
-import static br.com.tiagods.view.Menu.jTable3;
-import static br.com.tiagods.view.Menu.tbPrincipal;
-import static br.com.tiagods.view.Menu.txBuscarNome;
-import static br.com.tiagods.view.Menu.txCaminhoArquivo;
-import static br.com.tiagods.view.Menu.txCaminhoOutros;
-import static br.com.tiagods.view.Menu.txCaminhoPDF;
-import static br.com.tiagods.view.Menu.txIconValido;
-import static br.com.tiagods.view.Menu.txIconValido1;
-import static br.com.tiagods.view.Menu.txIconValido2;
-import static br.com.tiagods.view.Menu.txStatus;
-import static br.com.tiagods.view.Menu.txView1;
-import static br.com.tiagods.view.Menu.txView2;
-import static br.com.tiagods.view.Menu.txView3;
-import static br.com.tiagods.view.Menu.txView4;
-import static br.com.tiagods.view.Menu.txView5;
+import static br.com.tiagods.view.Menu.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,6 +57,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
     Set<String> listaNova;/*lista simples para guardar status não repetidos 
     dos clientes e enviar para tabela*/
     Set<File> arquivosNaoLidos = new HashSet<>();
+    List<String> filtroUser;
+    
     /*
     Colunas para cada tipo de registro / apenas para melhor visualização
     */
@@ -400,6 +379,16 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 totalRegistros++;
         }
         
+        filtroUser = new ArrayList<String>();
+        if(!txBuscarNome.getText().equals("")){
+            String[] lista = txBuscarNome.getText().split(",");
+            for(String s : lista){
+            	if(!s.trim().equals("")){
+            		filtroUser.add(Normalizer.normalize(s.trim().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
+            	}
+            }
+        
+        }
         
         int v = 0; //linha=v, coluna=i
         for(int h = 1; h<bean.retorna((String)comboCodigo.getSelectedItem()).size(); h++){
@@ -480,18 +469,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
     }
     private synchronized String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
         String encontrado = "Não Existe";
-        List<String> list = new ArrayList<>();;
-        if(!txBuscarNome.getText().equals("")){
-            //valor = Normalizer.normalize(txBuscarNome.getText().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-            
-            String[] lista = txBuscarNome.getText().split(",");
-            for(String s : lista){
-            	if(!s.trim().equals("")){
-            		list.add(Normalizer.normalize(s.trim().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
-            	}
-            }
         
-        }
         for(int i = 0; i< arquivos.size(); i++){
             if(arquivos.get(i).isFile()){
                 if(cnpj==true){
@@ -508,12 +486,38 @@ public class ControllerMenu implements ActionListener, MouseListener{
                     String arq = Normalizer.normalize(arquivos.get(i).getName().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
                     String arqSub = (arq.trim()).substring(0, 4);//pegar os 4 primeiros digitos do
                     
-                    boolean encontrado = "";
-                    list.forEach(c->{
-                    	
-                    });
-                    
-	                if(arqSub.equals(valorProcurado) && list.contains(arq)){//verifica se no nome do arquivo existe o valor procurado + dentro do filtro informado
+                    boolean filtrar = true;//por default é true
+                    boolean ignorarArquivos= false;
+                    //se o botao foi selecionado, os valores do conteudo serao ignorados
+                    if(chckbxIgnorarArquivos.isSelected()){
+                    	ignorarArquivos=true;
+                    }
+                    //estou percorrendo o filtro digitado pelo usuario, se o arquivo contiver o nome digitado saira do loop
+                    for(int j=0; j< filtroUser.size(); j++){
+                    	if(ignorarArquivos==false){
+                    		/*se o arquivo contiver o nome do filtro.get(j) retorna true e o break
+                    		*permite que saia imediatamente do loop e executar proxima ação, se id do cliente bate com o nome do conteudo
+                    		*/
+	                    	if(arq.contains(filtroUser.get(j))){
+	                    		filtrar = true;
+	                    		break;
+	                    	}
+	                    	else
+	                    		filtrar=false;//caso nao encontre continuara procurando na lista
+                    	}
+                    	else{
+                    		/*diferente do primeiro, se o arquivo contiver um valor especificado pelo filtro digitado
+                    		*ele desabilita a proxima ação e sai do loop
+                    		*/
+	                    	if(arq.contains(filtroUser.get(j))){
+		                    	filtrar = false;
+		                    	break;
+	                    	}
+	                    	else
+	                    		filtrar=true;
+                    	}
+                    }
+                    if(arqSub.equals(valorProcurado) && filtrar == true){//verifica se no nome do arquivo existe o valor procurado + dentro do filtro informado
 	                	if(encontrado.equals("Não Existe"))
 	                		encontrado = arquivos.get(i).getName();
 	                	else

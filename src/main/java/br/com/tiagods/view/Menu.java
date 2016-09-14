@@ -2,16 +2,18 @@ package br.com.tiagods.view;
 
 import java.awt.Color;
 import java.awt.Component;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import br.com.tiagods.controller.ControllerMenu;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
 
 public class Menu extends javax.swing.JFrame {
     /**
@@ -278,24 +280,32 @@ public class Menu extends javax.swing.JFrame {
         
         JLabel lblIniciar = new JLabel("Iniciar!");
         lblIniciar.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        chckbxIgnorarArquivos = new JCheckBox("Ignorar Arquivos");
+        chckbxIgnorarArquivos.setBackground(new Color(250, 250, 250));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5Layout.setHorizontalGroup(
         	jPanel5Layout.createParallelGroup(Alignment.TRAILING)
         		.addGroup(jPanel5Layout.createSequentialGroup()
         			.addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
-        				.addComponent(jLabel5)
-        				.addComponent(txBuscarNome, GroupLayout.PREFERRED_SIZE, 196, GroupLayout.PREFERRED_SIZE))
-        			.addGap(18, 23, Short.MAX_VALUE)
-        			.addComponent(btNomeArquivo, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
-        			.addGap(46)
+        				.addGroup(jPanel5Layout.createSequentialGroup()
+        					.addGroup(jPanel5Layout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(jLabel5)
+        						.addComponent(txBuscarNome, GroupLayout.PREFERRED_SIZE, 196, GroupLayout.PREFERRED_SIZE))
+        					.addGap(18, 23, Short.MAX_VALUE)
+        					.addComponent(btNomeArquivo, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
+        					.addGap(46))
+        				.addGroup(jPanel5Layout.createSequentialGroup()
+        					.addComponent(chckbxIgnorarArquivos)
+        					.addPreferredGap(ComponentPlacement.RELATED)))
         			.addGroup(jPanel5Layout.createParallelGroup(Alignment.TRAILING, false)
         				.addComponent(lblIniciar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         				.addComponent(btAvancar, GroupLayout.PREFERRED_SIZE, 45, Short.MAX_VALUE))
         			.addGap(29))
         );
         jPanel5Layout.setVerticalGroup(
-        	jPanel5Layout.createParallelGroup(Alignment.LEADING)
+        	jPanel5Layout.createParallelGroup(Alignment.TRAILING)
         		.addGroup(jPanel5Layout.createSequentialGroup()
         			.addGap(32)
         			.addGroup(jPanel5Layout.createParallelGroup(Alignment.TRAILING)
@@ -304,8 +314,10 @@ public class Menu extends javax.swing.JFrame {
         					.addGap(3)
         					.addComponent(txBuscarNome, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         				.addComponent(btNomeArquivo, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
+        			.addComponent(chckbxIgnorarArquivos)
         			.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        		.addGroup(Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+        		.addGroup(jPanel5Layout.createSequentialGroup()
         			.addContainerGap(30, Short.MAX_VALUE)
         			.addComponent(lblIniciar)
         			.addPreferredGap(ComponentPlacement.RELATED)
@@ -661,6 +673,7 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JTextField txView3;
     public static javax.swing.JTextField txView4;
     public static javax.swing.JTextField txView5;
+    public static JCheckBox chckbxIgnorarArquivos;
     // End of variables declaration//GEN-END:variables
 class Colorir extends JLabel implements TableCellRenderer{
     public Colorir(){
