@@ -17,35 +17,32 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
-
 /**
  *
  * @author Tiago
  */
 public class Relatorio {
     private String path; //Caminho base
-	
 	private String pathToReportPackage; // Caminho para o package onde estao armazenados os relatorios Jarper
 	
 	//Recupera os caminhos para que a classe possa encontrar os relatorios
 	public Relatorio() {
 		this.path = this.getClass().getClassLoader().getResource("").getPath();
-		this.pathToReportPackage = this.path+"br/com/tiagods/utilitarios/";
+		//this.pathToReportPackage = this.path+"br/com/tiagods/utilitarios/";
+		this.pathToReportPackage = System.getProperty("user.dir")+"/resources/";
 	}	
 	//Imprime/gera uma lista de Clientes
 	public void imprimir(List<CadastroBean> clientes) {
         try{
-        	JOptionPane.showMessageDialog(null, "Report Package: "+getPathToReportPackage());
-	        JasperReport report = JasperCompileManager.compileReport(getPathToReportPackage()+"Cadastro.jrxml");
-	        JOptionPane.showMessageDialog(null, "Compilou");
+        	JasperReport report = JasperCompileManager.compileReport(getPathToReportPackage()+"Cadastro.jrxml");
 	        JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(clientes));
-	        JOptionPane.showMessageDialog(null, "Imprimiu");
 	        //JasperExportManager.exportReportToPdfFile(print, desktop+"/relatorio.pdf");		
             JasperViewer.viewReport(print, true);
             }catch(JRException e){
                 JOptionPane.showMessageDialog(null, "Erro ao gerar relatorio \n"+e);
             }
         }
+	
 	public String getPathToReportPackage() {
 		return this.pathToReportPackage;
 	}

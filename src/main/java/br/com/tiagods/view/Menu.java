@@ -24,7 +24,6 @@ public class Menu extends javax.swing.JFrame {
     public Menu() {
         initComponents();
         controller.iniciar();
-        btRelatorio.setVisible(false);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -685,11 +684,11 @@ class Colorir extends JLabel implements TableCellRenderer{
         Object value, boolean isSelected, boolean hasFocus,
            int row, int column){
 
-        if(value.toString().equals("Não Existe")){
+        if(value.toString().equals("N�o Existe")){
             setBackground(Color.RED);
             setForeground(Color.WHITE);
         }
-        else if(value.toString().equals("CNPJ Inválido")){
+        else if(value.toString().equals("CNPJ Inv�lido")){
         	setBackground(Color.YELLOW);
             setForeground(Color.WHITE);
         }
