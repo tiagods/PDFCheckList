@@ -268,12 +268,8 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 	tabela=new Tabela();
                 tabela.addTudoOrRemoveTudo(jTable3, jTable2);
                 break;
-            case "abrirDelimitador":
-                Help help = new Help();
-                JOptionPane.showMessageDialog(null, help.getDelimitador());
-                break;
             case "abrirSobre":
-                help = new Help();
+            	Help help = new Help();
                 JOptionPane.showMessageDialog(null, help.getSobre());
                 break;
             case "abrirNomeArquivo":
@@ -343,7 +339,6 @@ public class ControllerMenu implements ActionListener, MouseListener{
     		System.out.println("Alguma coluna esta vazia");
     	}
     }
-    
     private void Time(){
         Iniciar iniciar = new Iniciar();
         Thread time = new Thread(iniciar);
@@ -540,9 +535,43 @@ public class ControllerMenu implements ActionListener, MouseListener{
         }
         Set<File> list = ab.getArquivos();
         for(File f : list){
-            if(f.isFile()){
+        	if(arquivosNaoLidos.contains(f)) continue;//pular se houve tentativa de leitura desse arquivo
+        	if(f.isFile()){
                 String arq = Normalizer.normalize(f.getName().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-                if(!morto.contains(f) && arq.contains(valor)){
+                
+                boolean filtrar = true;//por default é true
+                boolean ignorarArquivos= false;
+                //se o botao foi selecionado, os valores do conteudo serao ignorados
+                if(chckbxIgnorarArquivos.isSelected()){
+                	ignorarArquivos=true;
+                }
+                //estou percorrendo o filtro digitado pelo usuario, se o arquivo contiver o nome digitado saira do loop
+                for(int j=0; j< filtroUser.size(); j++){
+                	if(ignorarArquivos==false){
+                		/*se o arquivo contiver o nome do filtro.get(j) retorna true e o break
+                		*permite que saia imediatamente do loop e executar proxima ação, se id do cliente bate com o nome do conteudo
+                		*/
+                    	if(arq.contains(filtroUser.get(j))){
+                    		filtrar = true;
+                    		break;
+                    	}
+                    	else
+                    		filtrar=false;//caso nao encontre continuara procurando na lista
+                	}
+                	else{
+                		/*diferente do primeiro, se o arquivo contiver um valor especificado pelo filtro digitado
+                		*ele desabilita a proxima ação e sai do loop
+                		*/
+                    	if(arq.contains(filtroUser.get(j))){
+	                    	filtrar = false;
+	                    	break;
+                    	}
+                    	else
+                    		filtrar=true;
+                	}
+                }
+                
+                if(!morto.contains(f) && filtrar == true){
                     LeitoraPdf leitoraPDF = new LeitoraPdf();
                     if(leitoraPDF.verificarTexto(f, valorProcurado)){
                         if(encontrado.equals("Não Existe"))
