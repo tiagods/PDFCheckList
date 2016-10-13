@@ -27,7 +27,7 @@ public class Menu extends javax.swing.JFrame {
     ControllerMenu controller = new ControllerMenu();
     
     public Menu() {
-    	setTitle("SFList");
+    	setTitle("Controle de Obrigações");
         initComponents();
         controller.iniciar();
     }
