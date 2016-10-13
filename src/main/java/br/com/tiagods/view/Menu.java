@@ -27,7 +27,7 @@ public class Menu extends javax.swing.JFrame {
     ControllerMenu controller = new ControllerMenu();
     
     public Menu() {
-    	setTitle("SFList");
+    	setTitle("SFList Free Edition");
         initComponents();
         controller.iniciar();
     }
@@ -474,16 +474,21 @@ public class Menu extends javax.swing.JFrame {
         
         JPanel jPAtualizacao = new JPanel();
         jPAtualizacao.setBackground(new Color(250,250,250));
+        
+        lbTitulo = new JLabel();
+        lbTitulo.setText("CheckList de Obrigações");
+        lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lbTitulo.setFont(new Font("Palatino Linotype", Font.BOLD | Font.ITALIC, 24));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1Layout.setHorizontalGroup(
         	jPanel1Layout.createParallelGroup(Alignment.TRAILING)
         		.addGroup(jPanel1Layout.createSequentialGroup()
         			.addContainerGap()
-        			.addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-        				.addComponent(jScrollPane1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
-        				.addComponent(jPanel2, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
-        				.addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        			.addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
+        				.addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
+        				.addGroup(jPanel1Layout.createSequentialGroup()
         					.addComponent(txStatus, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
         					.addGap(18)
         					.addComponent(btCancelar)
@@ -492,7 +497,10 @@ public class Menu extends javax.swing.JFrame {
         					.addGap(18)
         					.addComponent(btExcel, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
         					.addGap(24))
-        				.addComponent(btAbrirSobre, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
+        				.addGroup(jPanel1Layout.createSequentialGroup()
+        					.addComponent(lbTitulo, GroupLayout.PREFERRED_SIZE, 831, GroupLayout.PREFERRED_SIZE)
+        					.addGap(18)
+        					.addComponent(btAbrirSobre, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE))
         				.addGroup(jPanel1Layout.createSequentialGroup()
         					.addComponent(jPAtualizacao, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
         					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -520,8 +528,10 @@ public class Menu extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
         	jPanel1Layout.createParallelGroup(Alignment.LEADING)
         		.addGroup(jPanel1Layout.createSequentialGroup()
-        			.addGap(8)
-        			.addComponent(btAbrirSobre, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap()
+        			.addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(btAbrirSobre, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lbTitulo, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE))
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
         				.addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
@@ -564,13 +574,20 @@ public class Menu extends javax.swing.JFrame {
         			.addContainerGap())
         );
         jPAtualizacao.setLayout(null);
-        jLabel14 = new javax.swing.JLabel();
-        jLabel14.setBounds(11, 24, 182, 33);
-        jPAtualizacao.add(jLabel14);
+        lbTitVersao = new javax.swing.JLabel();
+        lbTitVersao.setBounds(10, 11, 182, 33);
+        jPAtualizacao.add(lbTitVersao);
         
-                jLabel14.setFont(new Font("Palatino Linotype", Font.BOLD | Font.ITALIC, 30)); // NOI18N
-                jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-                jLabel14.setText("SFList 1.0");
+                lbTitVersao.setFont(new Font("Palatino Linotype", Font.BOLD | Font.ITALIC, 16)); // NOI18N
+                lbTitVersao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                lbTitVersao.setText("SFList 1.0");
+                
+                lbDetalhes = new JLabel();
+                lbDetalhes.setText("SFList 1.0");
+                lbDetalhes.setHorizontalAlignment(SwingConstants.CENTER);
+                lbDetalhes.setFont(new Font("Palatino Linotype", Font.BOLD, 12));
+                lbDetalhes.setBounds(10, 54, 182, 33);
+                jPAtualizacao.add(lbDetalhes);
         jPanel1.setLayout(jPanel1Layout);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -646,7 +663,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel lbTitVersao;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -678,6 +695,8 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JTextField txView4;
     public static javax.swing.JTextField txView5;
     public static JCheckBox chckbxIgnorarArquivos;
+    private JLabel lbDetalhes;
+    private JLabel lbTitulo;
     // End of variables declaration//GEN-END:variables
 class Colorir extends JLabel implements TableCellRenderer{
     public Colorir(){
