@@ -1,8 +1,11 @@
 package br.com.tiagods.utilitarios;
 
+import java.util.Date;
+
 public class DescricaoVersao {
 	private String nome="CheckList Obrigações";
 	private String versao="1.0";
+	private String data="10.10.2016";
 	/*
 	 * Historico das versoes
 	 * 1.0 - Versao Final Entregue
@@ -18,6 +21,10 @@ public class DescricaoVersao {
 	 */
 	public String getVersao() {
 		return versao;
+	}
+	
+	public String getDate(){
+		return data;
 	}
 	
 }

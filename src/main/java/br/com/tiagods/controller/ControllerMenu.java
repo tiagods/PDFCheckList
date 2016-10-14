@@ -7,6 +7,7 @@ package br.com.tiagods.controller;
 
 import static br.com.tiagods.view.Menu.*;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -41,6 +42,7 @@ import br.com.tiagods.model.PlanilhaBean;
 import br.com.tiagods.model.PlanilhaDao;
 import br.com.tiagods.model.Relatorio;
 import br.com.tiagods.model.Tabela;
+import br.com.tiagods.utilitarios.DescricaoVersao;
 import br.com.tiagods.utilitarios.Help;
 /**
  *
@@ -58,7 +60,6 @@ public class ControllerMenu implements ActionListener, MouseListener{
     dos clientes e enviar para tabela*/
     Set<File> arquivosNaoLidos = new HashSet<>();
     List<String> filtroUser;
-    
     /*
     Colunas para cada tipo de registro / apenas para melhor visualização
     */
@@ -66,28 +67,123 @@ public class ControllerMenu implements ActionListener, MouseListener{
     File temp = new File(System.getProperty("user.dir")+"/temp");
     File fileSaida = new File(temp+"/Cadastro.xls");;//arquivo temporario no sistema
     int delimitador;
+    boolean atualizar = false;
+    
+    DescricaoVersao descricao;
+    VerificarAtualizacao atualizacao;
     
     public void iniciar(){
-        if(temp.exists()){
-        	File[] arqTemp = temp.listFiles();
-	        for(File f : arqTemp)
-	            f.delete();
-        }
-        else
-            temp.mkdir();
-        travarCampos(jPanel1);
-        travarCampos(jPanel2);
-        mostrarIcones(txCaminhoArquivo,txIconValido);
-        mostrarIcones(txCaminhoPDF, txIconValido1);
-        mostrarIcones(txCaminhoOutros,txIconValido2);                    
+    	descricao = new DescricaoVersao();
+    	atualizacao = new VerificarAtualizacao();
+    	String titulo = descricao.getNome()+" "+descricao.getVersao();
+    	lbTitulo.setText(titulo);
+    	
+    	if(!verificarVersao(atualizacao,descricao)){
+    		System.out.println("Sistema desatualizado");
+    		relatarAtualizacaoDisponivel(atualizacao);
+    		atualizarAgora();
+    	}
+    	else{
+    		System.out.println("Sistema atualizado");
+    		lbTitVersao.setText("Atualizado");
+    		lbDetalhes.setText("Versao "+descricao.getVersao()+" - "+descricao.getDate());
+        	    		
+	        if(temp.exists()){
+	        	File[] arqTemp = temp.listFiles();
+		        for(File f : arqTemp)
+		            f.delete();
+	        }
+	        else
+	            temp.mkdir();
+	        travarCampos(jPanel1);
+	        travarCampos(jPanel2);
+	        mostrarIcones(txCaminhoArquivo,txIconValido);
+	        mostrarIcones(txCaminhoPDF, txIconValido1);
+	        mostrarIcones(txCaminhoOutros,txIconValido2);
+	        
+	        Agendador();
+    	}
+    	
     }
-
+    //comparação de versoes, retorna false se estiver desatualizado
+    public boolean verificarVersao(VerificarAtualizacao atualizacao, DescricaoVersao versao){
+    	if(atualizacao.receberStatus(versao).equals("Desatualizado"))
+    		return false;
+    	else return true;
+    	
+    }
+  //agendador para verificar se existe uma nova versao
+  	private void Agendador(){
+      	Cronometro cron = new Cronometro();
+      	Thread thread = new Thread(cron);
+      	thread.start();
+      }
+      public class Cronometro implements Runnable{
+  		public void run() {
+  			try{
+          		Thread.sleep(600000);//10 minutos
+          		System.out.println("Verificando se existe atualização");
+          		if(!verificarVersao(atualizacao,descricao)){
+          			relatarAtualizacaoDisponivel(atualizacao);
+              	}
+          		else
+          			Agendador();
+          	}catch(InterruptedException e){
+          		e.printStackTrace();
+          	}
+  		}
+  	}
+  	
+  	public void Alertar(){
+      	Alertas al = new Alertas();
+      	Thread thread = new Thread(al);
+      	thread.start();
+      }
+      public class Alertas implements Runnable{
+      	@Override
+      	public void run(){
+      		try{
+      			
+      			lbDetalhes.setBackground(Color.RED);
+      			lbDetalhes.setForeground(Color.WHITE);
+      			lbTitVersao.setBackground(Color.WHITE);
+      			lbTitVersao.setForeground(Color.RED);
+      			Thread.sleep(2000);
+      			lbTitVersao.setBackground(Color.RED);
+      			lbTitVersao.setForeground(Color.WHITE);
+      			lbDetalhes.setBackground(Color.WHITE);
+      			lbDetalhes.setForeground(Color.RED);
+      			Thread.sleep(2000);
+      			Alertar();
+              }catch(InterruptedException e){
+              	e.printStackTrace();
+              }
+      	}
+      }
+      
+      public void relatarAtualizacaoDisponivel(VerificarAtualizacao atualizacao){
+          lbTitVersao.setText("Versão "+atualizacao.versaoDisponivel()+" Disponível");
+          lbTitVersao.setBackground(Color.RED);
+          lbTitVersao.setForeground(Color.WHITE);
+          lbDetalhes.setText("Clique Aqui para Atualizar");
+          atualizar = true;
+          Alertar();
+          //piscar labels para alertar sobre atualiação pendente
+          
+      }
+    public void atualizarAgora(){
+    	System.out.println("Atualização invocada");
+    	try{
+			Runtime.getRuntime().exec("java -jar update.jar");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+    }
     public void travarCampos(JPanel panel){//metodo para travar campos para não edição
         for(int i =0; i<panel.getComponentCount();i++){
             if(panel.getComponent(i) instanceof JTextField)
                 ((JTextField)panel.getComponent(i)).setEnabled(false);
         }
-    
     }
     @SuppressWarnings("unchecked")
 	public void carregarCombo(JComboBox box, int combo){
@@ -348,118 +444,126 @@ public class ControllerMenu implements ActionListener, MouseListener{
         @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 		@Override
         public void run(){
-            
-        cliente = new ArrayList();
-        Arquivo arquivo = new Arquivo();
-        
-        List<File> diretorio1 = arquivo.pegarArquivos(txCaminhoPDF.getText(), true, "pdf");
-        List<File> diretorioOpcional=null;
-        
-        if(!txCaminhoOutros.getText().equals(""))
-            diretorioOpcional = arquivo.pegarArquivos(txCaminhoOutros.getText(), false, null);
-        
-        Tabela tabela = new Tabela();
-        tabela.limparTabela(tbPrincipal);
-        
-        TreeSet<String> mapa;//pega fitro do status
+        	cliente = new ArrayList();
+        	Arquivo arquivo = new Arquivo();
 
-        if(tabela.pegarNumeroDeLinhas(jTable3)>0)
-            mapa = tabela.pegarValores(jTable3);
-        else
-            mapa = tabela.pegarValores(jTable2);
-        
-        int totalRegistros = 0;
-        for(String status : bean.retorna((String)comboStatus.getSelectedItem())){
-            if(mapa.contains(status.toUpperCase()))
-                totalRegistros++;
-        }
-        
-        filtroUser = new ArrayList<String>();
-        if(!txBuscarNome.getText().equals("")){
-            String[] lista = txBuscarNome.getText().split(",");
-            for(String s : lista){
-            	if(!s.trim().equals("")){
-            		filtroUser.add(Normalizer.normalize(s.trim().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
-            	}
-            }
-        
-        }
-        
-        int v = 0; //linha=v, coluna=i
-        for(int h = 1; h<bean.retorna((String)comboCodigo.getSelectedItem()).size(); h++){
-        	if(cancelar){ 
-        		txStatus.setText("Tarefa cancelada pelo usuario!");
-        		break;
+        	List<File> diretorio1 = arquivo.pegarArquivos(txCaminhoPDF.getText(), true, "pdf");
+        	List<File> diretorioOpcional=null;
+
+        	if(!txCaminhoOutros.getText().equals(""))
+        		diretorioOpcional = arquivo.pegarArquivos(txCaminhoOutros.getText(), false, null);
+
+        	Tabela tabela = new Tabela();
+        	tabela.limparTabela(tbPrincipal);
+
+        	TreeSet<String> mapa;//pega fitro do status
+
+        	if(tabela.pegarNumeroDeLinhas(jTable3)>0)
+        		mapa = tabela.pegarValores(jTable3);
+        	else
+        		mapa = tabela.pegarValores(jTable2);
+
+        	int totalRegistros = 0;
+        	for(String status : bean.retorna((String)comboStatus.getSelectedItem())){
+        		if(mapa.contains(status.toUpperCase()))
+        			totalRegistros++;
         	}
-        	String status=bean.retorna((String)comboStatus.getSelectedItem()).get(h);
-        	if(mapa.contains(status.toUpperCase())){
-        		ArquivosBean ab = new ArquivosBean();
-        		cliente.add(new ArrayList());
-        		String codigo=bean.retorna((String)comboCodigo.getSelectedItem()).get(h);
-        		String nome=bean.retorna((String)comboNome.getSelectedItem()).get(h);
-        		String cnpj=bean.retorna((String)comboCNPJ.getSelectedItem()).get(h);
 
-        		((ArrayList)cliente.get(v)).add(codigo);
-        		((ArrayList)cliente.get(v)).add(status);
-        		((ArrayList)cliente.get(v)).add(nome);
-        		((ArrayList)cliente.get(v)).add(cnpj);
-        		if(!txCaminhoPDF.getText().equals("")){
-        			((ArrayList)cliente.get(v)).add(pegaNoNome(diretorio1, codigo, false, ab));//buscar codigo no nome
-
-        			if(!cnpj.trim().equals("99.999.999/9999-99") && !cnpj.trim().equals("") && 
-        					cnpj.trim().replace(".", "").replace("/", "").replace("-", "").length()>12)//validando cnpj
-        			{	
-        				try{
-        					Long.parseLong(cnpj.replace(".", "").replace("/", "").replace("-", "").trim());
-        					((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
-        				}catch(NumberFormatException e ){
-        					e.printStackTrace();
-        					((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
-        				}
+        	filtroUser = new ArrayList<String>();
+        	if(!txBuscarNome.getText().equals("")){
+        		String[] lista = txBuscarNome.getText().split(",");
+        		for(String s : lista){
+        			if(!s.trim().equals("")){
+        				filtroUser.add(Normalizer.normalize(s.trim().toUpperCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
         			}
-        			else
-        				((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
-
-        		}
-        		else{
-        			((ArrayList)cliente.get(v)).add("");//buscar codigo no nome
-        			((ArrayList)cliente.get(v)).add("");//buscar cnpjnoconteudo
         		}
 
-        		if(!txCaminhoOutros.getText().equals("")){//se o caminho outros foi informado ele vai adicionar valor
-        			((ArrayList)cliente.get(v)).add(pegaNoNome(diretorioOpcional, 
-        					cnpj.replace("/", "").replace("-", "").replace(".", ""), true, ab));//pegar cnpj do nome do arquivo
-        		}
-        		else{
-        			((ArrayList)cliente.get(v)).add("");
-        		}
-        		v++;
-        		txStatus.setText("Processando " +v+ " de " +totalRegistros+" registros! Aguarde...");
-        	} 
-        }      
-        try{
-            txStatus.setText("Concluido!!!");
-            Thread.sleep(2000);
-            txStatus.setText("");
-            
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }  
-        tabela.preencherTabela(tbPrincipal, cliente);
-        if(arquivosNaoLidos.size()>0){
-        	if(arquivo==null)
-        		arquivo = new Arquivo();
-        	String localPathName="resumo";
-        	String txtName = "SFList.txt";
-        	try{
-        		arquivo.gravarTxtInconsistencias(arquivosNaoLidos, localPathName+"/"+txtName);
-        		arquivo.copiarArquivosInconsistentes(arquivosNaoLidos, new File(localPathName));
-        	}catch(IOException e){
-        		JOptionPane.showMessageDialog(null, "Erro ao copiar os arquivos \n"+e.getMessage());
         	}
-        	JOptionPane.showMessageDialog(null, "Foi gerado uma lista de arquivos não lidos, salvo dentro da pasta "+localPathName);
+        	progressBar.setVisible(true);
         	
-        }
+        	int v = 0; //linha=v, coluna=i
+            for(int h = 1; h<bean.retorna((String)comboCodigo.getSelectedItem()).size(); h++){
+            	if(cancelar){ 
+            		txStatus.setText("Tarefa cancelada pelo usuario!");
+            		break;
+            	}
+            	String status=bean.retorna((String)comboStatus.getSelectedItem()).get(h);
+            	if(mapa.contains(status.toUpperCase())){
+            		ArquivosBean ab = new ArquivosBean();
+            		cliente.add(new ArrayList());
+            		String codigo=bean.retorna((String)comboCodigo.getSelectedItem()).get(h);
+            		String nome=bean.retorna((String)comboNome.getSelectedItem()).get(h);
+            		String cnpj=bean.retorna((String)comboCNPJ.getSelectedItem()).get(h);
+            		String[] name = nome.split(" ");
+            		
+            		((ArrayList)cliente.get(v)).add(codigo);
+            		((ArrayList)cliente.get(v)).add(status);
+            		((ArrayList)cliente.get(v)).add(nome);
+            		((ArrayList)cliente.get(v)).add(cnpj);
+            		
+            		if(!txCaminhoPDF.getText().equals("")){
+            			((ArrayList)cliente.get(v)).add(pegaNoNome(diretorio1, codigo, false, ab));//buscar codigo no nome
+
+            			if(!cnpj.trim().equals("99.999.999/9999-99") && !cnpj.trim().equals("") && 
+            					cnpj.trim().replace(".", "").replace("/", "").replace("-", "").length()>12)//validando cnpj
+            			{	
+            				try{
+            					Long.parseLong(cnpj.replace(".", "").replace("/", "").replace("-", "").trim());
+            					((ArrayList)cliente.get(v)).add(buscarNoConteudo(diretorio1, cnpj, true, ab));//buscar cnpjnoconteudo
+            				}catch(NumberFormatException e ){
+            					e.printStackTrace();
+            					((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
+            				}
+            			}
+            			else
+            				((ArrayList)cliente.get(v)).add("CNPJ Inválido");//buscar cnpjnoconteudo
+
+            		}
+            		else{
+            			((ArrayList)cliente.get(v)).add("");//buscar codigo no nome
+            			((ArrayList)cliente.get(v)).add("");//buscar cnpjnoconteudo
+            		}
+
+            		if(!txCaminhoOutros.getText().equals("")){//se o caminho outros foi informado ele vai adicionar valor
+            			((ArrayList)cliente.get(v)).add(pegaNoNome(diretorioOpcional, 
+            					cnpj.replace("/", "").replace("-", "").replace(".", ""), true, ab));//pegar cnpj do nome do arquivo
+            		}
+            		else{
+            			((ArrayList)cliente.get(v)).add("");
+            		}
+            		v++;
+            		txStatus.setText("Processando cliente "+name[0]+" = "+v+" de "+totalRegistros+" registros!");
+                	int percent = ((v*100)/(totalRegistros));
+            		progressBar.setValue(percent);
+            	} 
+            }
+        	
+    		
+        	try{
+        		txStatus.setText("Concluido!!!");
+        		progressBar.setValue(100);
+            	Thread.sleep(3000);
+        		txStatus.setText("");
+        		progressBar.setValue(0);
+            	progressBar.setVisible(false);
+        	}catch(InterruptedException e){
+        		e.printStackTrace();
+        	}  
+        	tabela.preencherTabela(tbPrincipal, cliente);
+        	if(arquivosNaoLidos.size()>0){
+        		if(arquivo==null)
+        			arquivo = new Arquivo();
+        		String localPathName="resumo";
+        		String txtName = "CheckList_de_Obrigacoes.txt";
+        		try{
+        			arquivo.gravarTxtInconsistencias(arquivosNaoLidos, localPathName+"/"+txtName);
+        			arquivo.copiarArquivosInconsistentes(arquivosNaoLidos, new File(localPathName));
+        		}catch(IOException e){
+        			JOptionPane.showMessageDialog(null, "Erro ao copiar os arquivos \n"+e.getMessage());
+        		}
+        		JOptionPane.showMessageDialog(null, "Foi gerado uma lista de arquivos não lidos, salvo dentro da pasta "+localPathName);
+
+        	}
         }
     }
     private synchronized String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
@@ -614,27 +718,24 @@ public class ControllerMenu implements ActionListener, MouseListener{
         
     @Override
     public void mouseClicked(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(atualizar)
+        	atualizarAgora();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private String carregarArquivo(boolean mostrarArquivos, boolean salvar, String title){

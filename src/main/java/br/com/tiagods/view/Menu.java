@@ -19,6 +19,14 @@ import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import java.awt.Window.Type;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
+import java.awt.ComponentOrientation;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JProgressBar;
 
 public class Menu extends javax.swing.JFrame {
     /**
@@ -27,14 +35,13 @@ public class Menu extends javax.swing.JFrame {
     ControllerMenu controller = new ControllerMenu();
     
     public Menu() {
-    	setTitle("SFList Free Edition");
+    	setTitle("Controle de Obrigacões");
         initComponents();
         controller.iniciar();
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txCaminhoArquivo = new javax.swing.JTextField();
@@ -267,8 +274,6 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel5.setText("Adicionar  - Nome de Arquivo:");
 
-        txBuscarNome.setToolTipText("");
-
         btAvancar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/play.jpg"))); // NOI18N
         btAvancar.setActionCommand("Iniciar");
         btAvancar.addActionListener(controller);
@@ -441,8 +446,8 @@ public class Menu extends javax.swing.JFrame {
         jLabel13.setBackground(new java.awt.Color(255, 255, 255));
         jLabel13.setText("Outros arquivos(Opcional):");
 
-        txStatus.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txStatus.setForeground(Color.GREEN);
+        txStatus.setFont(new Font("Tahoma", Font.BOLD, 12)); // NOI18N
+        txStatus.setForeground(Color.BLACK);
         txStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         btAbrirSobre.setBackground(new java.awt.Color(255, 255, 255));
@@ -473,12 +478,18 @@ public class Menu extends javax.swing.JFrame {
         btCancelar.addActionListener(controller);
         
         JPanel jPAtualizacao = new JPanel();
+        jPAtualizacao.addMouseListener(controller);
         jPAtualizacao.setBackground(new Color(250,250,250));
         
         lbTitulo = new JLabel();
-        lbTitulo.setText("CheckList de Obrigações");
         lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         lbTitulo.setFont(new Font("Palatino Linotype", Font.BOLD | Font.ITALIC, 24));
+        
+        progressBar = new JProgressBar(0,100);
+        progressBar.setForeground(Color.BLUE);
+        progressBar.setMinimumSize(new Dimension(100,0));
+        progressBar.setStringPainted(true);
+        progressBar.setVisible(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1Layout.setHorizontalGroup(
@@ -489,7 +500,9 @@ public class Menu extends javax.swing.JFrame {
         				.addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
         				.addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
         				.addGroup(jPanel1Layout.createSequentialGroup()
-        					.addComponent(txStatus, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+        					.addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+        						.addComponent(progressBar, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+        						.addComponent(txStatus, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE))
         					.addGap(18)
         					.addComponent(btCancelar)
         					.addGap(210)
@@ -564,30 +577,35 @@ public class Menu extends javax.swing.JFrame {
         			.addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-        				.addComponent(txStatus, GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
         				.addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false)
         					.addComponent(btRelatorio, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         					.addComponent(btExcel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        					.addComponent(btCancelar, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)))
+        					.addComponent(btCancelar, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE))
+        				.addGroup(jPanel1Layout.createSequentialGroup()
+        					.addComponent(txStatus, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(progressBar, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)))
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 187, GroupLayout.PREFERRED_SIZE)
         			.addContainerGap())
         );
         jPAtualizacao.setLayout(null);
-        lbTitVersao = new javax.swing.JLabel();
-        lbTitVersao.setBounds(10, 11, 182, 33);
+        
+        lbTitVersao = new JLabel("");
+        lbTitVersao.setBackground(Color.WHITE);
+        lbTitVersao.setOpaque(true);
+        lbTitVersao.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lbTitVersao.setHorizontalAlignment(SwingConstants.CENTER);
+        lbTitVersao.setBounds(10, 0, 182, 27);
         jPAtualizacao.add(lbTitVersao);
         
-                lbTitVersao.setFont(new Font("Palatino Linotype", Font.BOLD | Font.ITALIC, 16)); // NOI18N
-                lbTitVersao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-                lbTitVersao.setText("SFList 1.0");
-                
-                lbDetalhes = new JLabel();
-                lbDetalhes.setText("SFList 1.0");
-                lbDetalhes.setHorizontalAlignment(SwingConstants.CENTER);
-                lbDetalhes.setFont(new Font("Palatino Linotype", Font.BOLD, 12));
-                lbDetalhes.setBounds(10, 54, 182, 33);
-                jPAtualizacao.add(lbDetalhes);
+        lbDetalhes = new JLabel("");
+        lbDetalhes.setBackground(Color.WHITE);
+        lbDetalhes.setOpaque(true);
+        lbDetalhes.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lbDetalhes.setHorizontalAlignment(SwingConstants.CENTER);
+        lbDetalhes.setBounds(10, 32, 182, 55);
+        jPAtualizacao.add(lbDetalhes);
         jPanel1.setLayout(jPanel1Layout);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -608,11 +626,6 @@ public class Menu extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -660,10 +673,11 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JComboBox<String> comboStatus;
     public static javax.swing.JComboBox<String> comboStatus2;
     public static javax.swing.JButton jButton14;
+    public static JProgressBar progressBar;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel lbTitVersao;
+    public static javax.swing.JLabel lbTitulo, lbTitVersao, lbDetalhes;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -695,8 +709,7 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JTextField txView4;
     public static javax.swing.JTextField txView5;
     public static JCheckBox chckbxIgnorarArquivos;
-    private JLabel lbDetalhes;
-    private JLabel lbTitulo;
+    
     // End of variables declaration//GEN-END:variables
 class Colorir extends JLabel implements TableCellRenderer{
     public Colorir(){
