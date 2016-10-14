@@ -1,4 +1,4 @@
-package br.com.tiagods.view;
+﻿package br.com.tiagods.view;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -35,7 +35,7 @@ public class Menu extends javax.swing.JFrame {
     ControllerMenu controller = new ControllerMenu();
     
     public Menu() {
-    	setTitle("Controle de Obrigacões");
+    	setTitle("Controle de Obrigações");
         initComponents();
         controller.iniciar();
     }
