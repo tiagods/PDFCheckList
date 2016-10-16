@@ -175,6 +175,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
     	System.out.println("Atualização invocada");
     	try{
 			Runtime.getRuntime().exec("java -jar update.jar");
+    		System.exit(0);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

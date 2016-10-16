@@ -479,13 +479,14 @@ public class Menu extends javax.swing.JFrame {
         
         JPanel jPAtualizacao = new JPanel();
         jPAtualizacao.addMouseListener(controller);
-        jPAtualizacao.setBackground(new Color(250,250,250));
+        jPAtualizacao.setBackground(new Color(255,255,255));
         
         lbTitulo = new JLabel();
         lbTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         lbTitulo.setFont(new Font("Palatino Linotype", Font.BOLD | Font.ITALIC, 24));
         
         progressBar = new JProgressBar(0,100);
+        progressBar.setBackground(new Color(255,255,255));
         progressBar.setForeground(Color.BLUE);
         progressBar.setMinimumSize(new Dimension(100,0));
         progressBar.setStringPainted(true);
