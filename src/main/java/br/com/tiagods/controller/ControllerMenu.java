@@ -10,6 +10,8 @@ import static br.com.tiagods.view.Menu.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -48,7 +50,7 @@ import br.com.tiagods.utilitarios.Help;
  *
  * @author Tiago
  */
-public class ControllerMenu implements ActionListener, MouseListener{
+public class ControllerMenu implements ActionListener, MouseListener, ItemListener{
     @SuppressWarnings("rawtypes")
 	ArrayList cliente;//array pai, nele serão armazenados todos os clientes
     PlanilhaBean bean;
@@ -60,6 +62,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
     dos clientes e enviar para tabela*/
     Set<File> arquivosNaoLidos = new HashSet<>();
     List<String> filtroUser;
+    String lastDir="";
     /*
     Colunas para cada tipo de registro / apenas para melhor visualização
     */
@@ -87,7 +90,7 @@ public class ControllerMenu implements ActionListener, MouseListener{
     		System.out.println("Sistema atualizado");
     		lbTitVersao.setText("Atualizado");
     		lbDetalhes.setText("Versao "+descricao.getVersao()+" - "+descricao.getDate());
-        	    		
+        	lbDetalhes.setToolTipText("O que mudou? \n"+descricao.getDetalhes());    		
 	        if(temp.exists()){
 	        	File[] arqTemp = temp.listFiles();
 		        for(File f : arqTemp)
@@ -304,6 +307,11 @@ public class ControllerMenu implements ActionListener, MouseListener{
                     if(fileSaida.exists())
                         fileSaida.delete();//deletar arquivo temporario
                 }
+                comboCodigo.addItemListener(this);
+                comboNome.addItemListener(this);
+                comboCNPJ.addItemListener(this);
+                comboStatus.addItemListener(this);
+                
                 mostrarIcones(txCaminhoArquivo,txIconValido);
                 mostrarIcones(txCaminhoPDF, txIconValido1);
                 mostrarIcones(txCaminhoOutros,txIconValido2);
@@ -325,12 +333,6 @@ public class ControllerMenu implements ActionListener, MouseListener{
                 mostrarIcones(txCaminhoArquivo,txIconValido);
                 mostrarIcones(txCaminhoPDF, txIconValido1);
                 mostrarIcones(txCaminhoOutros,txIconValido2);
-                break;
-            case "Refresh":
-                refresh();
-                if(!txView5.getText().equals("")){
-                    preencherTabela();
-                }
                 break;
             case "Filtro":
                 if(cbFiltro.isSelected()){
@@ -743,25 +745,32 @@ public class ControllerMenu implements ActionListener, MouseListener{
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(mostrarArquivos);
         chooser.setDialogTitle(title);
-        String local = "";
+        if(!lastDir.equals(""))
+    		chooser.setSelectedFile(new File(lastDir));
+    	String local = "";
         if(mostrarArquivos){
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        	chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             chooser.addChoosableFileFilter(new FileNameExtensionFilter("Planilha do Excel", ".xls,.xlsx"));
             int retorno = chooser.showOpenDialog(null);
-            if(retorno==JFileChooser.OPEN_DIALOG)
+            if(retorno==JFileChooser.OPEN_DIALOG){
                 local = chooser.getSelectedFile().getPath();
+                lastDir = chooser.getSelectedFile().getParent();
+            }
         }
         else if(salvar==false){
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int retorno = chooser.showOpenDialog(null);
-            if(retorno==JFileChooser.APPROVE_OPTION)
+            if(retorno==JFileChooser.APPROVE_OPTION){
                 local = chooser.getSelectedFile().getAbsolutePath();//
+                lastDir = local;
+            }
         }
         else if(salvar){
-            chooser.addChoosableFileFilter(new FileNameExtensionFilter("Planilha do Excel (*.xls)", ".xls"));
-        int retorno = chooser.showSaveDialog(null);
+        	chooser.addChoosableFileFilter(new FileNameExtensionFilter("Planilha do Excel (*.xls)", ".xls"));
+            int retorno = chooser.showSaveDialog(null);
             if(retorno==JFileChooser.APPROVE_OPTION){
                 local = chooser.getSelectedFile().getAbsolutePath(); //
+                lastDir = chooser.getSelectedFile().getParent();
             }
         }
         return local;
@@ -773,4 +782,14 @@ public class ControllerMenu implements ActionListener, MouseListener{
         else
             label.setIcon(new ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconV.png")));
     }
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		JComboBox combo = (JComboBox)e.getSource();
+		if(!combo.getSelectedItem().equals(""))
+			refresh();
+		if(!txView5.getText().equals("")){
+            preencherTabela();
+        }
+		
+	}
 }

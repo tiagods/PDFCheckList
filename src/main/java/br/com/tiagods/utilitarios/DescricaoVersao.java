@@ -3,12 +3,15 @@ package br.com.tiagods.utilitarios;
 import java.util.Date;
 
 public class DescricaoVersao {
-	private String nome="CheckList Obrigações";
-	private String versao="1.0";
-	private String data="10.10.2016";
+	private String nome="CheckList de Obrigações";
+	private String versao="1.1";
+	private String data="23.11.2016";
+	private String detalhes="*Alterado comportamento das caixas de seleção,\n"
+			+ "*Gravação do ultimo caminho";
 	/*
 	 * Historico das versoes
 	 * 1.0 - Versao Final Entregue
+	 * 1.1 - Versao aplicado interface ItemListener em combobox 1,2,3,4 e registrado ultimo caminho escolhido
 	 */
 	/**
 	 * @return the nome
@@ -26,5 +29,7 @@ public class DescricaoVersao {
 	public String getDate(){
 		return data;
 	}
-	
+	public String getDetalhes(){
+		return this.detalhes;
+	}
 }

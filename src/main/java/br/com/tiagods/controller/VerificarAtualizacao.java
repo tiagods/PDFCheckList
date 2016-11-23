@@ -31,6 +31,7 @@ public class VerificarAtualizacao {
 					if(rs.getString(2).equals(versao.getVersao()))
 						return "Atualizado";
 					else{
+						System.out.println(""+rs.getString(2));
 						versaoDisponivel = rs.getString(2);
 						detalhesVersao = rs.getString(3);
 						dataVersao = sdf.format(rs.getDate(4));

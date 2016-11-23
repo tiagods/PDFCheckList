@@ -35,7 +35,7 @@ public class Menu extends javax.swing.JFrame {
     ControllerMenu controller = new ControllerMenu();
     
     public Menu() {
-    	setTitle("Controle de Obrigações");
+    	setTitle("CheckList de Obrigações");
         initComponents();
         controller.iniciar();
     }
@@ -80,7 +80,6 @@ public class Menu extends javax.swing.JFrame {
         txBuscarNome = new javax.swing.JTextField();
         btAvancar = new javax.swing.JButton();
         btNomeArquivo = new javax.swing.JButton();
-        jButton14 = new javax.swing.JButton();
         txIconValido = new javax.swing.JLabel();
         txIconValido1 = new javax.swing.JLabel();
         btCarregarDir = new javax.swing.JButton();
@@ -142,19 +141,13 @@ public class Menu extends javax.swing.JFrame {
         }
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-
-        comboStatus2.setActionCommand("FocusLost5");
-        comboStatus2.addActionListener(controller);
-
+        
         jLabel3.setText("Coluna:");
 
         txView5.setActionCommand("PreencherTabelas");
         txView5.addActionListener(controller);
 
         jLabel4.setText("Status:");
-
-        comboStatus.setActionCommand("FocusLost4");
-        comboStatus.addActionListener(controller);
 
         cbFiltro.setBackground(new java.awt.Color(255, 255, 255));
         cbFiltro.setText("Filtro Especial");
@@ -261,15 +254,6 @@ public class Menu extends javax.swing.JFrame {
 
         jLabel10.setText("Colunas: 1\u00AA Linha \u00E9 o nome da Coluna");
 
-        comboCodigo.setActionCommand("FocusLost1");
-        comboCodigo.addActionListener(controller);
-
-        comboNome.setActionCommand("FocusLost2");
-        comboNome.addActionListener(controller);
-
-        comboCNPJ.setActionCommand("FocusLost3");
-        comboCNPJ.addActionListener(controller);
-
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel5.setText("Adicionar  - Nome de Arquivo:");
@@ -334,8 +318,6 @@ public class Menu extends javax.swing.JFrame {
         );
         jPanel5.setLayout(jPanel5Layout);
 
-        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/refresh.jpg"))); // NOI18N
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2Layout.setHorizontalGroup(
         	jPanel2Layout.createParallelGroup(Alignment.LEADING)
@@ -343,30 +325,27 @@ public class Menu extends javax.swing.JFrame {
         			.addContainerGap()
         			.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
         				.addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        				.addGroup(jPanel2Layout.createSequentialGroup()
-        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false)
-        						.addComponent(jLabel10, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        						.addGroup(jPanel2Layout.createSequentialGroup()
-        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING, false)
-        								.addComponent(jLabel7, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        								.addComponent(jLabel8, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        								.addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        								.addComponent(jLabel9, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        							.addPreferredGap(ComponentPlacement.UNRELATED)
-        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING, false)
-        								.addComponent(comboStatus, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        								.addComponent(comboNome, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        								.addComponent(comboCodigo, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        								.addComponent(comboCNPJ, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE))
-        							.addPreferredGap(ComponentPlacement.UNRELATED)
-        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-        								.addComponent(txView1, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(txView2, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(txView3, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(txView4, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE))))
-        					.addPreferredGap(ComponentPlacement.UNRELATED)
-        					.addComponent(jButton14, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)))
-        			.addPreferredGap(ComponentPlacement.RELATED, 188, Short.MAX_VALUE)
+        				.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false)
+        					.addComponent(jLabel10, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        					.addGroup(jPanel2Layout.createSequentialGroup()
+        						.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING, false)
+        							.addComponent(jLabel7, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        							.addComponent(jLabel8, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        							.addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        							.addComponent(jLabel9, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        						.addPreferredGap(ComponentPlacement.UNRELATED)
+        						.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING, false)
+        							.addComponent(comboStatus, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        							.addComponent(comboNome, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        							.addComponent(comboCodigo, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        							.addComponent(comboCNPJ, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE))
+        						.addPreferredGap(ComponentPlacement.UNRELATED)
+        						.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        							.addComponent(txView1, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+        							.addComponent(txView2, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+        							.addComponent(txView3, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+        							.addComponent(txView4, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)))))
+        			.addPreferredGap(ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
         			.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
         				.addGroup(jPanel2Layout.createSequentialGroup()
         					.addComponent(cbFiltro)
@@ -397,21 +376,16 @@ public class Menu extends javax.swing.JFrame {
         						.addComponent(comboNome, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         						.addComponent(txView2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         						.addComponent(jLabel8, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
-        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-        						.addGroup(jPanel2Layout.createSequentialGroup()
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-        								.addComponent(comboCNPJ, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(txView3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-        								.addComponent(comboStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(txView4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        								.addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)))
-        						.addGroup(jPanel2Layout.createSequentialGroup()
-        							.addGap(15)
-        							.addComponent(jButton14, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)))
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+        						.addComponent(comboCNPJ, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(txView3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(jLabel9, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+        						.addComponent(comboStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(txView4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
         					.addPreferredGap(ComponentPlacement.RELATED)
         					.addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         					.addGap(8))
@@ -426,9 +400,6 @@ public class Menu extends javax.swing.JFrame {
         					.addGap(7))))
         );
         jPanel2.setLayout(jPanel2Layout);
-
-        jButton14.setActionCommand("Refresh");
-        jButton14.addActionListener(controller);
 
         btCarregarDir.setBackground(new java.awt.Color(255, 255, 255));
         btCarregarDir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/carregar.jpg"))); // NOI18N
@@ -592,7 +563,7 @@ public class Menu extends javax.swing.JFrame {
         );
         jPAtualizacao.setLayout(null);
         
-        lbTitVersao = new JLabel("");
+        lbTitVersao = new JLabel("Atualizado");
         lbTitVersao.setBackground(Color.WHITE);
         lbTitVersao.setOpaque(true);
         lbTitVersao.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -600,7 +571,7 @@ public class Menu extends javax.swing.JFrame {
         lbTitVersao.setBounds(10, 0, 182, 27);
         jPAtualizacao.add(lbTitVersao);
         
-        lbDetalhes = new JLabel("");
+        lbDetalhes = new JLabel("Hello");
         lbDetalhes.setBackground(Color.WHITE);
         lbDetalhes.setOpaque(true);
         lbDetalhes.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -673,7 +644,6 @@ public class Menu extends javax.swing.JFrame {
     public static javax.swing.JComboBox<String> comboNome;
     public static javax.swing.JComboBox<String> comboStatus;
     public static javax.swing.JComboBox<String> comboStatus2;
-    public static javax.swing.JButton jButton14;
     public static JProgressBar progressBar;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
