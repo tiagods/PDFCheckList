@@ -12,7 +12,15 @@ public class LeitoraPdf {
 	
 	StringBuilder sb = new StringBuilder();
     private int totalPages;
-	
+    
+//	public static void main(String[] args){
+//		new LeitoraPdf();
+//	}
+//    public LeitoraPdf(){
+//    	File arquivo = new File("C:/Users/Tiago/Desktop/10-2016/0498-EFDCOFINS-RECIBO-10-2016-ORIGINAL.pdf");
+//		if(verificarTexto(arquivo, "04.568.084/0001-15"))
+//			System.out.println("Conteudo existe");
+//    }
 	public boolean verificarTexto(File arquivo, String texto){
             PDDocument pdfDocumento = null;
             try{    

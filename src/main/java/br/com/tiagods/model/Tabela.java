@@ -44,7 +44,9 @@ public class Tabela {
             linha++;
             
         }
-        
+       lista.forEach(c->{
+    	   System.out.println(((ArrayList)c).get(0)+"\t"+((ArrayList)c).get(2)+"\t"+((ArrayList)c).get(3)+"\t"+((ArrayList)c).get(4)+"\t"+((ArrayList)c).get(5));
+       });
     }
     public int pegarNumeroDeLinhas(JTable table){
         DefaultTableModel tbm = (DefaultTableModel)table.getModel();

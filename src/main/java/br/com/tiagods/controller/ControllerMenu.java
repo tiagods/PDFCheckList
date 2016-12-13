@@ -125,7 +125,6 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
   		public void run() {
   			try{
           		Thread.sleep(600000);//10 minutos
-          		System.out.println("Verificando se existe atualização");
           		if(!verificarVersao(atualizacao,descricao)){
           			relatarAtualizacaoDisponivel(atualizacao);
               	}
@@ -429,13 +428,21 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
     
     public void refresh(){
     	try{
-	    	txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCodigo.getSelectedItem()).get(0) );
-	        txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0)==null ? "": bean.retorna((String)comboNome.getSelectedItem()).get(0));
-	        txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
-	        txView4.setText(bean.retorna((String)comboStatus.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus.getSelectedItem()).get(0));
-	        txView5.setText(bean.retorna((String)comboStatus2.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus2.getSelectedItem()).get(0));
-    	}catch(IndexOutOfBoundsException ex){
-    		System.out.println("Alguma coluna esta vazia");
+    		txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCodigo.getSelectedItem()).get(0) );
+    	}catch (IndexOutOfBoundsException e) {
+    	}
+    	try{
+    		txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0)==null ? "": bean.retorna((String)comboNome.getSelectedItem()).get(0));
+    	}catch (IndexOutOfBoundsException e) {
+    	}
+    	try{
+    		txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
+    	}catch (IndexOutOfBoundsException e) {
+    	}
+    	try{
+    		txView4.setText(bean.retorna((String)comboStatus.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus.getSelectedItem()).get(0));
+    		txView5.setText(bean.retorna((String)comboStatus2.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboStatus2.getSelectedItem()).get(0));
+    	}catch (IndexOutOfBoundsException e) {
     	}
     }
     private void Time(){
@@ -472,7 +479,7 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
         			totalRegistros++;
         	}
 
-        	filtroUser = new ArrayList<String>();
+        	filtroUser = new ArrayList<>();
         	if(!txBuscarNome.getText().equals("")){
         		String[] lista = txBuscarNome.getText().split(",");
         		for(String s : lista){
@@ -569,7 +576,7 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
         	}
         }
     }
-    private synchronized String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
+    public String pegaNoNome(List<File> arquivos, String valorProcurado, boolean cnpj, ArquivosBean ab){
         String encontrado = "Não Existe";
         
         for(int i = 0; i< arquivos.size(); i++){
@@ -634,7 +641,7 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
         
         return encontrado;
     }
-    private synchronized String buscarNoConteudo(List<File> lista, String valorProcurado, boolean listar, ArquivosBean ab){
+    public String buscarNoConteudo(List<File> lista, String valorProcurado, boolean listar, ArquivosBean ab){
         String encontrado = "Não Existe";
         String valor =".";
         if(!txBuscarNome.getText().equals("")){
@@ -654,7 +661,7 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
                 }
                 //estou percorrendo o filtro digitado pelo usuario, se o arquivo contiver o nome digitado saira do loop
                 for(int j=0; j< filtroUser.size(); j++){
-                	if(ignorarArquivos==false){
+                	if(!ignorarArquivos){
                 		/*se o arquivo contiver o nome do filtro.get(j) retorna true e o break
                 		*permite que saia imediatamente do loop e executar proxima ação, se id do cliente bate com o nome do conteudo
                 		*/
@@ -775,7 +782,7 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
         }
         return local;
     }
-    private void mostrarIcones(JTextField text, JLabel label){
+    public void mostrarIcones(JTextField text, JLabel label){
         if(text.getText().equals("")){
             label.setIcon(new ImageIcon(getClass().getResource("/br/com/tiagods/utilitarios/iconX.png")));
         }
@@ -784,12 +791,14 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
     }
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		JComboBox combo = (JComboBox)e.getSource();
-		if(!combo.getSelectedItem().equals(""))
-			refresh();
-		if(!txView5.getText().equals("")){
-            preencherTabela();
-        }
+		if(e.getStateChange()==ItemEvent.DESELECTED){
+			JComboBox<String> combo = (JComboBox<String>)e.getSource();
+			if(!combo.getSelectedItem().equals(""))
+				refresh();
+			if(!txView5.getText().equals("")){
+				preencherTabela();
+			}
+		}
 		
 	}
 }

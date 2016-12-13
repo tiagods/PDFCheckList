@@ -37,7 +37,7 @@ public class Relatorio {
         	JasperReport report = JasperCompileManager.compileReport(getPathToReportPackage()+"Cadastro.jrxml");
 	        JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(clientes));
 	        //JasperExportManager.exportReportToPdfFile(print, desktop+"/relatorio.pdf");		
-            JasperViewer.viewReport(print, true);
+            JasperViewer.viewReport(print, false);
             }catch(JRException e){
                 JOptionPane.showMessageDialog(null, "Erro ao gerar relatorio \n"+e);
             }
