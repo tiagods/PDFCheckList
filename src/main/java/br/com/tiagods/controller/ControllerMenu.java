@@ -19,6 +19,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -84,6 +88,18 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
     	if(!verificarVersao(atualizacao,descricao)){
     		System.out.println("Sistema desatualizado");
     		relatarAtualizacaoDisponivel(atualizacao);
+    		File updateNew = new File("update-1.jar");
+    		if(updateNew.exists()){
+    			Path pathI = Paths.get(updateNew.getAbsolutePath());
+    			File update = new File("update.jar");
+    			Path pathO = Paths.get(update.getAbsolutePath());
+    			try {
+					Files.copy(pathI, pathO, StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    			updateNew.delete();
+    		}
     		atualizarAgora();
     	}
     	else{
@@ -174,9 +190,8 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
           
       }
     public void atualizarAgora(){
-    	System.out.println("Atualização invocada");
     	try{
-			Runtime.getRuntime().exec("java -jar update.jar");
+    		Runtime.getRuntime().exec("java -jar update.jar plk*link815");
     		System.exit(0);
 		}catch(Exception e){
 			e.printStackTrace();
