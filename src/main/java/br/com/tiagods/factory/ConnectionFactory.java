@@ -1,4 +1,4 @@
-package br.com.tiago.factory;
+package br.com.tiagods.factory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

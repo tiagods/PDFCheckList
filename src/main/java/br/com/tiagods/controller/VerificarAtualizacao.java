@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import br.com.tiago.factory.ConnectionFactory;
+import br.com.tiagods.factory.ConnectionFactory;
 import br.com.tiagods.utilitarios.DescricaoVersao;
 
 public class VerificarAtualizacao {
