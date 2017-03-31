@@ -50,6 +50,8 @@ import br.com.tiagods.model.Relatorio;
 import br.com.tiagods.model.Tabela;
 import br.com.tiagods.utilitarios.DescricaoVersao;
 import br.com.tiagods.utilitarios.Help;
+import br.com.tiagods.view.ImageView;
+import br.com.tiagods.view.Menu;
 /**
  *
  * @author Tiago
@@ -79,7 +81,10 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
     DescricaoVersao descricao;
     VerificarAtualizacao atualizacao;
     
-    public void iniciar(){
+    Menu menu;
+    
+    public void iniciar(Menu menu){
+    	this.menu=menu;
     	descricao = new DescricaoVersao();
     	atualizacao = new VerificarAtualizacao();
     	String titulo = descricao.getNome()+" "+descricao.getVersao();
@@ -219,16 +224,23 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
             box.setSelectedItem("A");
             break;
             case 2:
-            box.setSelectedItem("K");
+            if(bean.retorna("K").isEmpty())
+            	box.setSelectedItem("A");
+            else
+            	box.setSelectedItem("K");
             break;
             case 3:
-            box.setSelectedItem("R");
+            	if(bean.retorna("R").isEmpty())
+                	box.setSelectedItem("A");
+                else
+                	box.setSelectedItem("R");
             break;
             case 4:
-            box.setSelectedItem("B");
-            break;
             case 5:
-            box.setSelectedItem("B");
+            	if(bean.retorna("B").isEmpty())
+                	box.setSelectedItem("A");
+                else
+                	box.setSelectedItem("B");
             break;
             default:
                 break;
@@ -393,10 +405,8 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
                 String export = carregarArquivo(false, true, "Salvar arquivo");
                 if(!export.equals("") && cliente!=null){
                    PlanilhaDao planilha = new PlanilhaDao();
-                   List<CadastroBean> lista;
-                   lista = tabela.pegarDadosTabela(tbPrincipal);
+                   List<CadastroBean> lista = tabela.pegarDadosTabela(tbPrincipal);
                    planilha.exportToExcel(lista, new File(export+".xls"));
-                   
                 }
                 else
                     JOptionPane.showMessageDialog(null, "Não existe dados para gerar relatorio!");
@@ -421,6 +431,15 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
                     cancelar = true;
                 }
                 break;
+            case "Validar":
+            	lista = tabela.pegarDadosTabela(tbPrincipal);
+                if(!lista.isEmpty()){
+                	ImageView dialog = new ImageView(menu,lista,tbPrincipal,false,-1,txCaminhoPDF.getText());
+                	dialog.setVisible(true);
+                }
+            	break;
+            	default:
+            		break;
         }
     }
     private void preencherTabela(){
@@ -445,10 +464,12 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
     	try{
     		txView1.setText(bean.retorna((String)comboCodigo.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCodigo.getSelectedItem()).get(0) );
     	}catch (IndexOutOfBoundsException e) {
+    		e.printStackTrace();
     	}
     	try{
     		txView2.setText(bean.retorna((String)comboNome.getSelectedItem()).get(0)==null ? "": bean.retorna((String)comboNome.getSelectedItem()).get(0));
     	}catch (IndexOutOfBoundsException e) {
+    		
     	}
     	try{
     		txView3.setText(bean.retorna((String)comboCNPJ.getSelectedItem()).get(0)==null ? "" : bean.retorna((String)comboCNPJ.getSelectedItem()).get(0));
@@ -557,13 +578,11 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
             			((ArrayList)cliente.get(v)).add("");
             		}
             		v++;
-            		txStatus.setText("Processando cliente "+name[0]+" = "+v+" de "+totalRegistros+" registros!");
+            		txStatus.setText("Processando cliente "+codigo+" ("+name[0]+") = "+v+" de "+totalRegistros+" registros!");
                 	int percent = ((v*100)/(totalRegistros));
             		progressBar.setValue(percent);
             	} 
             }
-        	
-    		
         	try{
         		txStatus.setText("Concluido!!!");
         		progressBar.setValue(100);
@@ -573,8 +592,10 @@ public class ControllerMenu implements ActionListener, MouseListener, ItemListen
             	progressBar.setVisible(false);
         	}catch(InterruptedException e){
         		e.printStackTrace();
+        		progressBar.setValue(0);
+        		progressBar.setVisible(false);
         	}  
-        	tabela.preencherTabela(tbPrincipal, cliente);
+        	tabela.preencherTabela(menu,tbPrincipal, cliente);
         	if(arquivosNaoLidos.size()>0){
         		if(arquivo==null)
         			arquivo = new Arquivo();

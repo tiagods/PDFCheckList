@@ -5,6 +5,7 @@
  */
 package br.com.tiagods.model;
 
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -19,7 +20,8 @@ public class CadastroBean implements Serializable{
     private String statusCodigo;
     private String statusCnpj;
     private String observacao;
-
+    private int localizacao; //localização na jtable da view Menu
+    private File image;
     /**
      * @return the codigo
      */
@@ -117,4 +119,32 @@ public class CadastroBean implements Serializable{
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
+
+	/**
+	 * @return the localizacao
+	 */
+	public int getLocalizacao() {
+		return localizacao;
+	}
+
+	/**
+	 * @param localizacao the localizacao to set
+	 */
+	public void setLocalizacao(int localizacao) {
+		this.localizacao = localizacao;
+	}
+
+	/**
+	 * @return the image
+	 */
+	public File getImage() {
+		return image;
+	}
+
+	/**
+	 * @param image the image to set
+	 */
+	public void setImage(File image) {
+		this.image = image;
+	}
 }

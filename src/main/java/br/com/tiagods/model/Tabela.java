@@ -5,27 +5,56 @@
  */
 package br.com.tiagods.model;
 
+import static br.com.tiagods.view.Menu.tbPrincipal;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
-/**imp
+import br.com.tiagods.view.ImageView;
+import br.com.tiagods.view.Menu;
+
+/**
  *
  * @author Tiago
  */
 public class Tabela {
-    public void preencherTabela(JTable table, ArrayList lista){
-        DefaultTableModel tbm = (DefaultTableModel)table.getModel();
+    @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+	public void preencherTabela(Menu menu, JTable table, ArrayList lista){
+        Object[] nomeColunas = new Object[] {
+        		"Codigo", "Status", "Nome", "CNPJ", "Status Codigo", "Status CNPJ", "Observa\u00E7\u00E3o", "Valida\u00E7\u00E3o Manual"
+        };
+    	limparTabela(table);
+        DefaultTableModel tbm = new DefaultTableModel(nomeColunas,0){
+    		boolean[] canEdit = new boolean[]{
+    				false,false,false,false,false,false,false,true
+    		};
+    		@Override
+			public boolean isCellEditable(int rowIndex, int columnIndex) {
+				return canEdit [columnIndex];
+			}
+    	};
         int linha =0;
         while(linha<lista.size()){
             tbm.addRow(new Object[1]);
             Iterator<String> iterator = ((ArrayList)lista.get(linha)).iterator();
             int coluna = 0;
+            
             boolean achei = false;
+            String coluna7="";
             while(iterator.hasNext()){
             	String valor = iterator.next();
             	if(coluna==4){//se coluna for 4 retornará verdadeiro para a proxima coluna
@@ -36,17 +65,43 @@ public class Tabela {
             	if(coluna==5 && achei==true){
             		if(valor.equals("Não Existe")){
             			valor="Erro na Leitura do Arquivo PDF";
+            			coluna7="Nec.Intervenção Manual";
             		}
             	}
             	tbm.setValueAt(valor, linha, coluna);
                 coluna++;
             }
+            if(coluna==7){
+            	tbm.setValueAt(coluna7, linha, coluna);
+            }
             linha++;
-            
         }
-       lista.forEach(c->{
-    	   System.out.println(((ArrayList)c).get(0)+"\t"+((ArrayList)c).get(2)+"\t"+((ArrayList)c).get(3)+"\t"+((ArrayList)c).get(4)+"\t"+((ArrayList)c).get(5));
-       });
+        table.setModel(tbm);
+        table.setRowHeight(30);
+        if (table.getColumnModel().getColumnCount() > 0) {
+        	table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        	table.getColumnModel().getColumn(1).setPreferredWidth(40);
+        	table.getColumnModel().getColumn(2).setMaxWidth(150);
+        	table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        	table.getColumnModel().getColumn(7).setMinWidth(100);
+        }
+        
+//        JButton button = new ButtonColumn(table, 7).getButton();
+//        button.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+////				ImageView dialog = new ImageView(menu,pegarDadosTabela(table),table,true,table.getSelectedRow(),pastaDosArquivos);
+////            	dialog.setVisible(true);
+//			}
+//		});
+        TableCellRenderer tcr1 = new Colorir();
+        TableColumn column1 = table.getColumnModel().getColumn(4);
+        column1.setCellRenderer(tcr1);
+
+        TableCellRenderer tcr2 = new Colorir();
+        TableColumn column2 = table.getColumnModel().getColumn(5);
+        column2.setCellRenderer(tcr2);
+        
     }
     public int pegarNumeroDeLinhas(JTable table){
         DefaultTableModel tbm = (DefaultTableModel)table.getModel();
@@ -131,8 +186,48 @@ public List<CadastroBean> pegarDadosTabela(JTable tabela){
         cb.setStatusCodigo((String)tb.getValueAt(i, 4));
         cb.setStatusCnpj((String)tb.getValueAt(i, 5));
         cb.setObservacao((String)tb.getValueAt(i, 6));
+        cb.setLocalizacao(i);
         lista.add(cb);
     }
     return lista;
+}
+
+public class Colorir extends JLabel implements TableCellRenderer{
+    public Colorir(){
+        this.setOpaque(true);
+    }
+    @Override
+    public Component getTableCellRendererComponent(
+        JTable table, 
+        Object value, boolean isSelected, boolean hasFocus,
+           int row, int column){
+
+        if(value.toString().equals("Não Existe") || value.toString().equals("Rejeitado Manualmente") ){
+            setBackground(Color.RED);
+            setForeground(Color.WHITE);
+        }
+        else if(value.toString().equals("CNPJ Inválido")){
+        	setBackground(Color.YELLOW);
+            setForeground(Color.WHITE);
+        }
+        else if(value.toString().equals("Erro na Leitura do Arquivo PDF")){
+        	setBackground(Color.ORANGE);
+            setForeground(Color.WHITE);
+        }
+        else{
+            setBackground(Color.GREEN);
+            setForeground(Color.WHITE);
+//setBackground(table.getBackground());		
+        }
+        setText(value.toString());
+        return this;   	
+    }
+  
+  public void validate() {}
+  public void revalidate() {}
+  protected void firePropertyChange(String propertyName,
+     Object oldValue, Object newValue) {}
+  public void firePropertyChange(String propertyName,
+     boolean oldValue, boolean newValue) {}
 }
 }
